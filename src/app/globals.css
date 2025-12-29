@@ -24,3 +24,10 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+@layer components {
+  input:autofill {
+    background-color: var(--bg-gray-300); /* or any other background color */
+  }
+}
+
