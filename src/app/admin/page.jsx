@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import axiosClient from "@/lib/axios_client";
 
 export default function AdminPanel() {
   // Courses
@@ -27,91 +28,138 @@ export default function AdminPanel() {
 
   // --- Fetch Functions ---
   const fetchCourses = async () => {
-    const res = await fetch("/api/courses");
-    setCourses(await res.json());
+    try {
+      const { data } = await axiosClient.get("/api/courses");
+      setCourses(data);
+    } catch (error) {
+      console.error("Error fetching courses:", error);
+    }
   };
 
   const fetchSemesters = async (course_id) => {
     if (!course_id) return;
-    const res = await fetch(`/api/semesters?course_id=${course_id}`);
-    setSemesters(await res.json());
+    try {
+      const { data } = await axiosClient.get(`/api/semesters?course_id=${course_id}`);
+      setSemesters(data);
+    } catch (error) {
+      console.error("Error fetching semesters:", error);
+    }
   };
 
   const fetchSubjects = async (semester_id) => {
     if (!semester_id) return;
-    const res = await fetch(`/api/subjects?semester_id=${semester_id}`);
-    setSubjects(await res.json());
+    try {
+      const { data } = await axiosClient.get(`/api/subjects?semester_id=${semester_id}`);
+      setSubjects(data);
+    } catch (error) {
+      console.error("Error fetching subjects:", error);
+    }
   };
 
   const fetchUnits = async (subject_id) => {
     if (!subject_id) return;
-    const res = await fetch(`/api/units?subject_id=${subject_id}`);
-    setUnits(await res.json());
+    try {
+      const { data } = await axiosClient.get(`/api/units?subject_id=${subject_id}`);
+      setUnits(data);
+    } catch (error) {
+      console.error("Error fetching units:", error);
+    }
   };
 
   useEffect(() => { fetchCourses(); }, []);
 
   // --- CRUD Functions ---
   const createCourse = async () => {
-    await fetch("/api/courses", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ course_code: courseCode, course_name: courseName })
-    });
-    setCourseCode(""); setCourseName(""); fetchCourses();
+    try {
+      await axiosClient.post("/api/courses", {
+        course_code: courseCode,
+        course_name: courseName
+      });
+      setCourseCode(""); setCourseName(""); fetchCourses();
+    } catch (error) {
+      console.error("Error creating course:", error);
+    }
   };
 
   const deleteCourse = async (id) => {
-    await fetch("/api/courses", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) });
-    setSelectedCourse(null); setSemesters([]); setSelectedSemester(null); setSubjects([]); setSelectedSubject(null); setUnits([]);
-    fetchCourses();
+    try {
+      await axiosClient.delete("/api/courses", { data: { id } });
+      setSelectedCourse(null); setSemesters([]); setSelectedSemester(null); setSubjects([]); setSelectedSubject(null); setUnits([]);
+      fetchCourses();
+    } catch (error) {
+      console.error("Error deleting course:", error);
+    }
   };
 
   const createSemester = async () => {
     if (!selectedCourse) return;
-    await fetch("/api/semesters", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ course_id: selectedCourse.id, semester_number: semesterNumber, title: semesterTitle })
-    });
-    setSemesterNumber(""); setSemesterTitle(""); fetchSemesters(selectedCourse.id);
+    try {
+      await axiosClient.post("/api/semesters", {
+        course_id: selectedCourse.id,
+        semester_number: semesterNumber,
+        title: semesterTitle
+      });
+      setSemesterNumber(""); setSemesterTitle(""); fetchSemesters(selectedCourse.id);
+    } catch (error) {
+      console.error("Error creating semester:", error);
+    }
   };
 
   const deleteSemester = async (id) => {
-    await fetch("/api/semesters", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) });
-    setSelectedSemester(null); setSubjects([]); setSelectedSubject(null); setUnits([]);
-    fetchSemesters(selectedCourse.id);
+    try {
+      await axiosClient.delete("/api/semesters", { data: { id } });
+      setSelectedSemester(null); setSubjects([]); setSelectedSubject(null); setUnits([]);
+      fetchSemesters(selectedCourse.id);
+    } catch (error) {
+      console.error("Error deleting semester:", error);
+    }
   };
 
   const createSubject = async () => {
     if (!selectedSemester) return;
-    await fetch("/api/subjects", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ semester_id: selectedSemester.id, name: subjectName, shortcode: subjectShortcode })
-    });
-    setsubjectName(""); setSubjectShortcode(""); fetchSubjects(selectedSemester.id);
+    try {
+      await axiosClient.post("/api/subjects", {
+        semester_id: selectedSemester.id,
+        name: subjectName,
+        shortcode: subjectShortcode
+      });
+      setsubjectName(""); setSubjectShortcode(""); fetchSubjects(selectedSemester.id);
+    } catch (error) {
+      console.error("Error creating subject:", error);
+    }
   };
 
   const deleteSubject = async (id) => {
-    await fetch("/api/subjects", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) });
-    setSelectedSubject(null); setUnits([]);
-    fetchSubjects(selectedSemester.id);
+    try {
+      await axiosClient.delete("/api/subjects", { data: { id } });
+      setSelectedSubject(null); setUnits([]);
+      fetchSubjects(selectedSemester.id);
+    } catch (error) {
+      console.error("Error deleting subject:", error);
+    }
   };
 
   const createUnit = async () => {
     if (!selectedSubject) return;
-    await fetch("/api/units", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ subject_id: selectedSubject.id, unit_number: unitNumber, title: unitTitle })
-    });
-    setUnitNumber(""); setUnitTitle(""); fetchUnits(selectedSubject.id);
+    try {
+      await axiosClient.post("/api/units", {
+        subject_id: selectedSubject.id,
+        unit_number: unitNumber,
+        title: unitTitle
+      });
+      setUnitNumber(""); setUnitTitle(""); fetchUnits(selectedSubject.id);
+    } catch (error) {
+      console.error("Error creating unit:", error);
+    }
   };
 
   const deleteUnit = async (id) => {
-    await fetch("/api/units", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) });
-    fetchUnits(selectedSubject.id);
+    try {
+      await axiosClient.delete("/api/units", { data: { id } });
+      fetchUnits(selectedSubject.id);
+    } catch (error) {
+      console.error("Error deleting unit:", error);
+    }
   };
 
   // --- Render ---

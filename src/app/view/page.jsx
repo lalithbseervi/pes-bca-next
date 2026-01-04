@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import axiosClient from "@/lib/axios_client";
 
 export default function ViewResourcePage() {
   const searchParams = useSearchParams();
@@ -42,21 +43,19 @@ export default function ViewResourcePage() {
 
     const fetchResource = async () => {
       // Fetch resource details
-      const res = await fetch(`/api/resources?file=${storageKey}`);
-      const data = await res.json();
+      const { data: resourceData } = await axiosClient.get(`/api/resources?file=${storageKey}`);
 
-      if (data && data.length > 0) {
-        const resource = data[0];
+      if (resourceData && resourceData.length > 0) {
+        const resource = resourceData[0];
         setResourceData(resource);
 
         // Use same-origin API to stream PDF (works for private buckets and avoids CORS)
         setPdfUrl(`/api/download?view_file=${storageKey}`);
 
         // Fetch navigation efficiently using resource ID
-        const navRes = await fetch(
+        const { data: navData } = await axiosClient.get(
           `/api/resources/navigation?id=${resource.id}`
         );
-        const navData = await navRes.json();
         setNavigation(navData);
       }
     };

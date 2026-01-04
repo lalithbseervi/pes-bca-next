@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useSession } from "@/components/clientLayout";
+import { useSession } from "@/components/ClientLayout";
+import axiosClient from "@/lib/axios_client";
 
 const Download = () => {
   const { session } = useSession();
@@ -24,13 +25,12 @@ const Download = () => {
     const fetchSemesters = async () => {
       if (!session) return;
       try {
-        const sems = await fetch(
+        const { data } = await axiosClient.get(
           `/api/semesters?course_id=${session?.course_id}`,
           {
             signal: abortController.signal,
           }
         );
-        const data = await sems.json();
         setSemesters(data);
       } catch (err) {
         console.warn(err);
@@ -51,9 +51,12 @@ const Download = () => {
     const fetchSubjects = async () => {
       if (!session) return;
       if (subjects.length === 0) {
-        fetch(`/api/subjects?semester_id=${session?.current_sem_db}`)
-          .then((res) => res.json())
-          .then(setSubjects);
+        try {
+          const { data } = await axiosClient.get(`/api/subjects?semester_id=${session?.current_sem_db}`);
+          setSubjects(data);
+        } catch (error) {
+          console.error("Failed to fetch subjects:", error);
+        }
       }
     };
     fetchSubjects();
@@ -67,9 +70,14 @@ const Download = () => {
       return;
     }
 
-    fetch(`/api/units?subject_id=${subjectId}`)
-      .then((res) => res.json())
-      .then(setUnits);
+    (async () => {
+      try {
+        const { data } = await axiosClient.get(`/api/units?subject_id=${subjectId}`);
+        setUnits(data);
+      } catch (error) {
+        console.error("Failed to fetch units:", error);
+      }
+    })();
   }, [subjectId]);
 
   // Fetch resources when active unit changes
@@ -81,8 +89,7 @@ const Download = () => {
       const url = `/api/resources?subject_id=${subjectId}&unit_id=${unitId}${
         resourceType ? `&resource_type=${resourceType}` : ""
       }`;
-      const res = await fetch(url);
-      const data = await res.json();
+      const { data } = await axiosClient.get(url);
 
       const currentUnitId = unitId;
       const selectedUnit = units.find(
@@ -99,8 +106,9 @@ const Download = () => {
         const downloadUrl = `/api/download?file=${storageKey}`;
 
         try {
-          const res = await fetch(downloadUrl);
-          const blob = await res.blob();
+          const { data: blob } = await axiosClient.get(downloadUrl, {
+            responseType: 'blob',
+          });
           const link = document.createElement("a");
 
           link.download = `${r.filename}`;

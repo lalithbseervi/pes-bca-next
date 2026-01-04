@@ -2,7 +2,8 @@
 
 import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/lib/supabase";
-import { useSession } from "@/components/clientLayout";
+import { useSession } from "@/components/ClientLayout";
+import axiosClient from "@/lib/axios_client";
 
 export default function ResourceUploadPage() {
   const { session } = useSession();
@@ -30,13 +31,12 @@ export default function ResourceUploadPage() {
       if (!session?.course_id) return;
 
       try {
-        const res = await fetch(
+        const { data } = await axiosClient.get(
           `/api/semesters?course_id=${session.course_id}`,
           {
             signal: abortController.signal,
           }
         );
-        const data = await res.json();
         setSemesters(data);
       } catch (error) {
         if (error.name === "AbortError") {
@@ -66,17 +66,16 @@ export default function ResourceUploadPage() {
       try {
         if (!session) return;
         if (subjects.length === 0) {
-          fetch(`/api/subjects?semester_id=${session?.current_sem_db}`, {
+          const { data } = await axiosClient.get(`/api/subjects?semester_id=${session?.current_sem_db}`, {
             signal: abortController.signal,
-          })
-            .then((res) => res.json())
-            .then(setSubjects);
+          });
+          setSubjects(data);
         }
       } catch (error) {
         if (error.name === "AbortError") {
           console.log("Fetch aborted");
         } else {
-          console.error("Error fetching semesters:", error);
+          console.error("Error fetching subjects:", error);
         }
       }
     };
@@ -93,9 +92,14 @@ export default function ResourceUploadPage() {
       return;
     }
 
-    fetch(`/api/units?subject_id=${subjectId}`)
-      .then((res) => res.json())
-      .then(setUnits);
+    (async () => {
+      try {
+        const { data } = await axiosClient.get(`/api/units?subject_id=${subjectId}`);
+        setUnits(data);
+      } catch (error) {
+        console.error("Error fetching units:", error);
+      }
+    })();
   }, [subjectId]);
 
   /* add file to queue  */
@@ -154,16 +158,12 @@ export default function ResourceUploadPage() {
         if (error) throw error;
 
         // insert DB record
-        await fetch("/api/resources", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            unit_id: currentUnitId,
-            resource_type: r.resourceType,
-            filename: r.filename,
-            storage_key: storageKey,
-            link_text: r.linkText,
-          }),
+        await axiosClient.post("/api/resources", {
+          unit_id: currentUnitId,
+          resource_type: r.resourceType,
+          filename: r.filename,
+          storage_key: storageKey,
+          link_text: r.linkText,
         });
       }
 

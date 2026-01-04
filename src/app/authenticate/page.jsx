@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useSession } from "@/components/clientLayout";
+import { useSession } from "@/components/ClientLayout";
+import axiosClient from "@/lib/axios_client";
 
 export default function AuthenticatePage() {
   const { session, setSession } = useSession();
@@ -12,6 +13,7 @@ export default function AuthenticatePage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const srn_pattern = /^[PES]{3}[1-2]{1}[A-Z]{2}[0-9]{2}[A-Z]{2}[0-9]{3}$/i;
   const prn_pattern = /^[PES]{3}[1-2]\d{9}$/i;
@@ -56,33 +58,34 @@ export default function AuthenticatePage() {
 
   const login = async () => {
     setLoading(true);
+    setError(null);
 
     try {
-      const response = await fetch("/api/authenticate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ username: username, password, profile: true }),
+      const { data } = await axiosClient.post("/api/authenticate", {
+        username: username,
+        password,
+        profile: true,
       });
 
-      console.log("response: ", response);
-
-      const authResponse = await response
-        .json()
-        .catch(() =>
-          console.error("[auth api]: couldn't parse auth API response")
-        );
-
-      console.log("Full authResponse:", authResponse);
-      if (response.ok) {
-        setSession(authResponse.session);
-        router.replace(redirectTo || "/");
-      }
+      console.log("Full authResponse:", data);
+      setSession(data.session);
+      router.replace(redirectTo || "/");
     } catch (error) {
-      console.error(error);
+      console.error("Authentication error:", error);
+      
+      // Extract error message from response
+      let errorMessage = error.response?.data?.error || 
+                          error.response?.data?.message || 
+                          error.message || 
+                          "Authentication failed. Please try again.";
+
+      errorMessage = String(errorMessage); // Ensure it's a string
+
+      if (errorMessage.includes("course_id")) {
+        errorMessage = `No resources are there for this course. Please wait while they are being added.\n\nFull Error: ${errorMessage}`
+      }
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -132,6 +135,22 @@ export default function AuthenticatePage() {
           </div>
         )}
       </div>
+
+      {/* Error Modal */}
+      {error && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-neutral-900 border border-red-500 rounded-lg p-6 max-w-md mx-4 shadow-2xl">
+            <h3 className="text-xl font-bold text-red-500 mb-4">Authentication Error</h3>
+            <p className="text-neutral-200 mb-6 whitespace-pre-wrap">{error}</p>
+            <button
+              onClick={() => setError(null)}
+              className="w-full bg-red-900 hover:bg-red-800 text-white py-2 rounded-md transition-colors"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
