@@ -20,7 +20,7 @@ export function makeCookie(name, value, maxAgeSec, request) {
     'HttpOnly',
   ]
   if (!isLocal) {
-    attrs.push('Secure', 'SameSite=None')
+    attrs.push('Secure', 'SameSite=Strict')
   }
   return attrs.join('; ')
 }
@@ -28,7 +28,7 @@ export function makeCookie(name, value, maxAgeSec, request) {
 export function clearCookie(name, request) {
   const isLocal = isLocalFromRequest(request)
   const base = `${name}=; Max-Age=0; Path=/; HttpOnly`
-  return isLocal ? base : `${base}; Secure; SameSite=None`
+  return isLocal ? base : `${base}; Secure; SameSite=Strict`
 }
 
 export function parseCookies(header) {
@@ -39,4 +39,27 @@ export function parseCookies(header) {
     if (i > -1) out[kv.slice(0, i).trim()] = decodeURIComponent(kv.slice(i + 1).trim())
   })
   return out
+}
+
+export function respondWithCookies(access, refresh, request, sessionObj) {
+  const headers = new Headers();
+  const ACCESS_TTL = 24 * 60 * 60;
+  const REFRESH_TTL = 7 * 24 * 60 * 60;
+
+  headers.append(
+    "Set-Cookie",
+    makeCookie("access_token", access, ACCESS_TTL, request)
+  );
+  headers.append(
+    "Set-Cookie",
+    makeCookie("refresh_token", refresh, REFRESH_TTL, request)
+  );
+
+  return new Response(
+    JSON.stringify({
+      success: true,
+      session: sessionObj,
+    }),
+    { status: 200, headers }
+  );
 }

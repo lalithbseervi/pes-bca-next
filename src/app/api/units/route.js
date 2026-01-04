@@ -5,7 +5,7 @@ export async function GET(req) {
   const { searchParams } = new URL(req.url);
   const subject_id = searchParams.get("subject_id");
 
-  let query = supabase.from("units").select("*");
+  let query = supabase.from("units").select("id, subject_id, unit_number, title");
   if (subject_id) query = query.eq("subject_id", subject_id);
 
   const { data, error } = await query;
