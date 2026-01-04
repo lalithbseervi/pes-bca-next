@@ -2,9 +2,10 @@
 
 import { Suspense, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { useSession } from "@/components/clientLayout";
+import { useSession } from "@/components/ClientLayout";
+import axiosClient from "@/lib/axios_client";
 
-const ResourceTable = dynamic(() => import("@/components/resourceTable"), {
+const ResourceTable = dynamic(() => import("@/components/ResourceTable"), {
   ssr: false,
   suspense: true,
 });
@@ -27,13 +28,12 @@ export default function Dashboard() {
       if (!session?.course_id) return;
 
       try {
-        const res = await fetch(
+        const { data } = await axiosClient.get(
           `/api/semesters?course_id=${session.course_id}`,
           {
             signal: abortController.signal,
           }
         );
-        const data = await res.json();
         setSemesters(data);
       } catch (error) {
         if (error.name === "AbortError") {
@@ -45,7 +45,6 @@ export default function Dashboard() {
     };
 
     fetchSemesters();
-
     return () => abortController.abort();
   }, [session]);
 
@@ -60,11 +59,10 @@ export default function Dashboard() {
 
     const fetchSubjects = async () => {
       try {
-        const res = await fetch(
+        const { data } = await axiosClient.get(
           `/api/subjects?semester_id=${selectedSemesterId}`,
           { signal: abortController.signal }
         );
-        const data = await res.json();
         setSubjects(data);
       } catch (error) {
         if (error.name === "AbortError") {
@@ -157,6 +155,7 @@ export default function Dashboard() {
       >
         <ResourceTable
           activeUnitId={null}
+          semesterId={selectedSemesterId ? selectedSemesterId.toString() : null}
           subjectId={selectedSubjectId}
           resourceType={selectedResourceType}
         />
