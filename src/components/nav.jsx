@@ -213,8 +213,9 @@ export default function Nav() {
             <span>Install App {!isInstallable && "(Debug)"}</span>
           </button>
 
-          <button
+          <Link
             id="privacy-settings-mobile"
+            href="/privacy-settings"
             className="flex gap-4 items-center p-4 text-lg text-white"
             onClick={() => setMenuOpen(false)}
           >
@@ -234,7 +235,7 @@ export default function Nav() {
               </svg>
             </div>
             <span>Privacy Settings</span>
-          </button>
+          </Link>
         </div>
       )}
 
@@ -269,9 +270,10 @@ export default function Nav() {
               <span className="opacity-0 group-hover:opacity-100 transition-all duration-500">Install App{!isInstallable}</span>
             </button>
 
-            {/* Privacy Settings Button */}
-            <button
+            {/* Privacy Settings Link */}
+            <Link
               id="privacy-settings-button"
+              href="/privacy-settings"
               className="flex justify-start items-center text-white flex-1 ml-2 mr-4 rounded-md hover:ring hover:shadow-[#21c063]/50 hover:text-[#21c063]"
               style={{ cursor: "pointer", maxHeight: "4vh" }}
             >
@@ -292,7 +294,7 @@ export default function Nav() {
                 </svg>
               </div>
               <span className="opacity-0 group-hover:opacity-100 transition-all duration-500">Privacy Settings</span>
-            </button>
+            </Link>
           </div>
         </nav>
       )}

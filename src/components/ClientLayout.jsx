@@ -6,6 +6,8 @@ import Nav from "@/components/nav";
 import Footer from "@/components/footer";
 import ProfileCompletionModal from "@/components/ProfileCompletionModal";
 import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
+import AnalyticsConsentBanner from "@/components/AnalyticsConsentBanner";
+import { initPostHog, setPostHogOptIn } from '@/app/instrumentation_client';
 
 const SessionContext = createContext(null);
 
@@ -26,6 +28,22 @@ export default function ClientLayout({ children }) {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Initialize PostHog when client mounts and when session changes.
+  useEffect(() => {
+    if (!mounted) return;
+    // Run only in browser
+    try {
+      const opted = typeof window !== 'undefined' && localStorage.getItem('analytics_opted_in') === '1';
+      initPostHog({ user: session, optedIn: opted });
+      // Ensure opt-in/out flags are set in the running instance
+      setPostHogOptIn(opted, session);
+    } catch (err) {
+      // don't block rendering on instrumentation failures
+      // eslint-disable-next-line no-console
+      console.warn('PostHog init failed', err);
+    }
+  }, [mounted, session]);
 
   useEffect(() => {
     if (!mounted) return;
@@ -56,6 +74,7 @@ export default function ClientLayout({ children }) {
   return (
     <SessionContext.Provider value={{ session, setSession }}>
       <ServiceWorkerRegistration />
+      <AnalyticsConsentBanner user={session} />
       <div className="flex min-h-screen flex-col md:flex-row p-0 m-0">
         <Nav />
         <div className="flex-1 w-full overflow-x-hidden">
