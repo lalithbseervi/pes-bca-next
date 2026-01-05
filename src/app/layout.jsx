@@ -1,4 +1,5 @@
 import "./globals.css";
+import { Suspense } from "react";
 import ClientLayout from "@/components/ClientLayout";
 
 export const metadata = {
@@ -24,7 +25,9 @@ export default function RootLayout({ children }) {
         <link rel="icon" href="/favicon.ico" />
       </head>
       <body>
-        <ClientLayout>{children}</ClientLayout>
+        <Suspense fallback={null}>
+          <ClientLayout>{children}</ClientLayout>
+        </Suspense>
       </body>
     </html>
   );

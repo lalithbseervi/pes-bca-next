@@ -4,7 +4,7 @@ import { TokenVerificationService } from "./lib/services/TokenVerificationServic
 // Define CORS configuration
 const corsOptions = {
   allowedMethods: ["GET", "HEAD", "PUT", "POST", "DELETE", "OPTIONS"],
-  allowedOrigins: process.env.DEVELOPMENT === 'false' ? ["http://localhost:3000", "*"] : ["https://pes-bca.pages.dev"],
+  allowedOrigins: process.env.DEVELOPMENT === 'false' ? ["http://localhost:3000", "*"] : ["https://pes-bca.vercel.app"],
   allowedHeaders: ["Content-Type", "Authorization", "If-None-Match"],
   exposedHeaders: [],
   maxAge: "86400", // 24 hours
