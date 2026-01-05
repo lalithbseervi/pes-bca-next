@@ -4,6 +4,8 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import Nav from "@/components/nav";
 import Footer from "@/components/footer";
+import ProfileCompletionModal from "@/components/ProfileCompletionModal";
+import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
 
 const SessionContext = createContext(null);
 
@@ -53,9 +55,11 @@ export default function ClientLayout({ children }) {
 
   return (
     <SessionContext.Provider value={{ session, setSession }}>
+      <ServiceWorkerRegistration />
       <div className="flex min-h-screen flex-col md:flex-row p-0 m-0">
         <Nav />
         <div className="flex-1 w-full overflow-x-hidden">
+          <ProfileCompletionModal />
           <main>{children}</main>
           <Footer />
         </div>

@@ -6,6 +6,9 @@ import {
 import { TokenManager } from "./TokenManager";
 import { SessionManager } from "./SessionManager";
 import { UserManager } from "./UserManager";
+import { createLogger } from "../logger";
+
+const log = createLogger('AuthenticationService'); 
 
 export class AuthenticationService {
   constructor(
@@ -44,6 +47,7 @@ export class AuthenticationService {
   async authenticate(username, password, user_agent) {
     const device_id = await getDeviceId(username, user_agent);
     let user = await this.user_manager.getUserByUsername(username);
+    let profile;
 
     // Case 1: User exists and has a session on this device
     try {
@@ -59,17 +63,21 @@ export class AuthenticationService {
             username,
             password
           );
-        }
+        } 
+      } else {
+        log.info('user not found');
       }
 
       // Case 2: No existing session, authenticate with external API
-      const profile = await this.authenticateWithAPI(username, password);
+      profile = await this.authenticateWithAPI(username, password, user);
 
       // Case 3: User doesn't exist, create new user
       if (!user) {
+        let course_id;
+        let current_semester;
         try {
-          const course_id = await resolveCourseId({ username, profile });
-          const current_semester = await this.resolveSemesterFromProfile(
+          course_id = await this.resolveCourseIdSafely({ username, profile });
+          current_semester = await this.resolveSemesterFromProfile(
             username,
             profile
           );
@@ -79,12 +87,11 @@ export class AuthenticationService {
             current_semester
           );
         } catch (err) {
-          return new Response(
-            JSON.stringify({ success: false, error: err.message }),
-            {
-              status: 400,
-            }
-          );
+          log.warn("User creation failed, issuing shadow user for degraded auth", err);
+          course_id = course_id ?? (await this.resolveCourseIdSafely({ username, profile }));
+          current_semester =
+            current_semester ?? (await this.resolveSemesterFromProfile(username, profile));
+          user = this.buildShadowUser(username, course_id, current_semester);
         }
       }
     } catch (err) {
@@ -108,7 +115,9 @@ export class AuthenticationService {
 
     // Both tokens expired: require re-authentication with auth endpoint
     if (access_expired && refresh_expired) {
-      const profile = await this.authenticateWithAPI(username, password);
+      log.info('access and refresh tokens expired')  
+      const profile = await this.authenticateWithAPI(username, password, user);
+      log.info('profile: ', profile)
       return await this.createNewSession(
         user,
         profile,
@@ -135,26 +144,38 @@ export class AuthenticationService {
         this.token_manager.getLastRefreshed()
       );
 
-      session_profile.access_token = access_token;
-      session_profile.refresh_token = session.refresh_token;
-    } else {
-      session_profile.access_token = session.access_token;
-      session_profile.refresh_token = session.refresh_token;
+      // Update last login
+      await this.user_manager.updateLastLogin(user.id);
+
+      // Enrich profile with additional data
+      await this.enrichSessionProfile(session_profile, user);
+
+      return {
+        profile: session_profile,
+        access_token,
+        refresh_token: session.refresh_token,
+      };
     }
 
+    // Both tokens still valid
     // Update last login
     await this.user_manager.updateLastLogin(user.id);
 
     // Enrich profile with additional data
     await this.enrichSessionProfile(session_profile, user);
 
-    return session_profile;
+    return {
+      profile: session_profile,
+      access_token: session.access_token,
+      refresh_token: session.refresh_token,
+    };
   }
 
   async createNewSession(user, profile, device_id) {
-    const course_code = profile.srn.match(
+    const srnMatch = profile?.srn?.match(
       /^PES[1-2]UG\d{2}([A-Z]{2})\d{3}$/i
-    )[1];
+    );
+    const course_code = profile.course_code || (srnMatch ? srnMatch[1] : null);
 
     const session_profile = {
       ...profile,
@@ -167,20 +188,28 @@ export class AuthenticationService {
     const { access_token, refresh_token } =
       await this.token_manager.generateTokenPair(user.id, session_profile);
 
-    await this.session_manager.createSession(
-      user.id,
-      device_id,
-      access_token,
-      refresh_token,
-      this.token_manager.getExpiresAt()
-    );
+    if (!user.shadow) {
+      try {
+        await this.session_manager.createSession(
+          user.id,
+          device_id,
+          access_token,
+          refresh_token,
+          this.token_manager.getExpiresAt()
+        );
+      } catch (err) {
+        log.warn("Failed to persist session; proceeding with in-memory tokens", err.message);
+      }
+    }
 
     // Enrich profile with additional data
     await this.enrichSessionProfile(session_profile, user);
-    session_profile.access_token = access_token;
-    session_profile.refresh_token = refresh_token;
 
-    return session_profile;
+    return {
+      profile: session_profile,
+      access_token,
+      refresh_token,
+    };
   }
 
   async extractDeviceId(username, session) {
@@ -202,19 +231,100 @@ export class AuthenticationService {
     return resolveSemesterFromUsername(username);
   }
 
-  async authenticateWithAPI(username, password) {
-    const response = await fetch(this.auth_endpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password, profile: true }),
-    });
+  async authenticateWithAPI(username, password, user) {
+    let response;
 
-    if (!response.ok) {
-      throw new Error("Invalid credentials");
+    try {
+      response = await fetch(this.auth_endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password, profile: true, fields: [ "name", "prn", "srn", "program", "branch", "semester" ] }),
+      });
+    } catch (err) {
+      log.error("auth endpoint unreachable, using fallback profile", err);
+      return await this.buildProfileFromExistingData(username, user);
     }
 
-    const { profile } = await response.json();
-    return profile;
+    if (response.ok) {
+      const { profile } = await response.json();
+      return profile;
+    }
+
+    if (response.status === 404 || response.status >= 500) {
+      log.warn(`auth endpoint unavailable (${response.status}), using fallback profile`);
+      return await this.buildProfileFromExistingData(username, user);
+    }
+
+    const errorText = await response.text().catch(() => "");
+    log.error(`auth endpoint returned ${response.status}: ${errorText}`);
+    throw new Error("Invalid credentials");
+  }
+
+  buildFallbackProfile(username) {
+    const normalized = username.toUpperCase();
+    // Minimal profile to allow access when auth service is down; still subject to course/semester resolution.
+    return {
+      name: normalized,
+      srn: normalized,
+      prn: normalized,
+      program: null,
+      branch: null,
+      semester: null,
+      fallback: true,
+    };
+  }
+
+  buildShadowUser(username, course_id, current_semester) {
+    const normalized = username.toUpperCase();
+    return {
+      id: `shadow-${normalized}`,
+      college_id: normalized,
+      course_id: course_id ?? null,
+      current_semester: current_semester ?? 1,
+      shadow: true,
+    };
+  }
+
+  async buildProfileFromExistingData(username, user) {
+    const normalized = username.toUpperCase();
+    const baseProfile = this.buildFallbackProfile(normalized);
+
+    if (user) {
+      baseProfile.srn = user.college_id || normalized;
+      baseProfile.prn = user.college_id || normalized;
+      baseProfile.semester = user.current_semester || baseProfile.semester;
+      baseProfile.course_id = user.course_id || null;
+    }
+
+    // Try resolving course_id from username/program if missing
+    if (!baseProfile.course_id) {
+      const resolved = await this.resolveCourseIdSafely({ username, profile: baseProfile });
+      baseProfile.course_id = resolved;
+    }
+
+    // Try resolve semester if still missing
+    if (!baseProfile.semester) {
+      baseProfile.semester = await this.resolveSemesterFromProfile(username, baseProfile);
+    }
+
+    // Enrich course_code from DB if possible
+    if (baseProfile.course_id) {
+      const course = await this.user_manager.getCourseById(baseProfile.course_id);
+      if (course?.course_code) {
+        baseProfile.course_code = course.course_code;
+      }
+    }
+
+    return baseProfile;
+  }
+
+  async resolveCourseIdSafely({ username, profile }) {
+    try {
+      return await resolveCourseId({ username, profile });
+    } catch (err) {
+      log.warn("course_id resolution failed, continuing with null", err.message);
+      return null;
+    }
   }
 
   async extractSessionProfile(access_token, user) {

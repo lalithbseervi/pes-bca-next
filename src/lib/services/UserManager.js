@@ -46,4 +46,15 @@ export class UserManager {
 
     return semester;
   }
+
+  async getCourseById(course_id) {
+    if (!course_id) return null;
+    const { data: course } = await this.supabase
+      .from("courses")
+      .select("id, course_code, course_name")
+      .eq("id", course_id)
+      .single();
+
+    return course || null;
+  }
 }

@@ -64,7 +64,6 @@ export default function AuthenticatePage() {
       const { data } = await axiosClient.post("/api/authenticate", {
         username: username,
         password,
-        profile: true,
       });
 
       console.log("Full authResponse:", data);

@@ -1,6 +1,9 @@
 import { respondWithCookies } from "@/lib/cookies.js";
 import { supabase } from "@/lib/supabase";
 import { AuthenticationService } from "@/lib/services/AuthenticationService.js";
+import { createLogger } from "@/lib/logger";
+
+const log = createLogger('authentication_handler');
 
 export async function POST(request) {
   try {
@@ -13,25 +16,27 @@ export async function POST(request) {
     );
 
     // Perform authentication
-    const session_profile = await auth_service.authenticate(
+    const result = await auth_service.authenticate(
       username,
       password,
       request.headers.get("user-agent")
     );
 
     // If authentication service returns a Response object (error case), return it directly
-    if (session_profile instanceof Response) {
-      return session_profile;
+    if (result instanceof Response) {
+      return result;
     }
 
+    const { profile, access_token, refresh_token } = result;
+
     return respondWithCookies(
-      session_profile.access_token,
-      session_profile.refresh_token,
+      access_token,
+      refresh_token,
       request,
-      session_profile
+      profile
     );
   } catch (error) {
-    console.error("Authentication error:", error);
+    log.error("Authentication error:", error);
 
     if (error.message === "Invalid credentials") {
       return new Response(
