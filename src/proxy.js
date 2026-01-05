@@ -4,8 +4,7 @@ import { TokenVerificationService } from "./lib/services/TokenVerificationServic
 // Define CORS configuration
 const corsOptions = {
   allowedMethods: ["GET", "HEAD", "PUT", "POST", "DELETE", "OPTIONS"],
-  // IMPORTANT: use env variable to dynamically set allowedOrigins
-  allowedOrigins: ["http://localhost:3000", "*"],
+  allowedOrigins: process.env.DEVELOPMENT === 'false' ? ["http://localhost:3000", "*"] : ["https://pes-bca.pages.dev"],
   allowedHeaders: ["Content-Type", "Authorization", "If-None-Match"],
   exposedHeaders: [],
   maxAge: "86400", // 24 hours
