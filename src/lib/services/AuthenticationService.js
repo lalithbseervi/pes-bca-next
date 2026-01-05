@@ -52,10 +52,15 @@ export class AuthenticationService {
     // Case 1: User exists and has a session on this device
     try {
       if (user) {
-        const session = await this.session_manager.getSession(
+        // If shadow profile, check expires_at
+        if (user.shadow === true && user.expires_at && Date.now() > user.expires_at) {
+          log.warn(`Shadow profile for ${username} expired, forcing re-authentication`);
+          user = null;
+        }
+        const session = user ? await this.session_manager.getSession(
           user.id,
           device_id
-        );
+        ) : null;
         if (session) {
           return await this.handleExistingSession(
             user,
@@ -276,18 +281,22 @@ export class AuthenticationService {
 
   buildShadowUser(username, course_id, current_semester) {
     const normalized = username.toUpperCase();
+    // Shadow/fallback profiles valid for 3 hours
+    const expires_at = Date.now() + 3 * 60 * 60 * 1000;
     return {
       id: `shadow-${normalized}`,
       college_id: normalized,
       course_id: course_id ?? null,
       current_semester: current_semester ?? 1,
       shadow: true,
+      expires_at,
     };
   }
 
   async buildProfileFromExistingData(username, user) {
     const normalized = username.toUpperCase();
-    const baseProfile = this.buildFallbackProfile(normalized);
+    const expires_at = Date.now() + 3 * 60 * 60 * 1000;
+    const baseProfile = { ...this.buildFallbackProfile(normalized), expires_at };
 
     if (user) {
       baseProfile.srn = user.college_id || normalized;
@@ -315,6 +324,8 @@ export class AuthenticationService {
       }
     }
 
+    // Set 3-hour validity for fallback DB profile
+    baseProfile.expires_at = expires_at;
     return baseProfile;
   }
 

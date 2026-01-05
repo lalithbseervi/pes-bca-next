@@ -1,3 +1,7 @@
+import { createLogger } from "@/lib/logger.js";
+
+const log = createLogger('SessionManager');
+
 export class SessionManager {
   constructor(supabase) {
     this.supabase = supabase;
@@ -11,6 +15,9 @@ export class SessionManager {
       .eq("device_id", device_id)
       .single();
 
+    if (!session) {
+      log.warn(`No session found for user: ${user_id}`);
+    }
     return session || null;
   }
 
@@ -32,7 +39,11 @@ export class SessionManager {
       .select("*")
       .single();
 
-    if (error) throw error;
+    if (error) {
+      log.error(`Failed to create session: ${user_id}`, error);
+      throw error;
+    }
+    log.info(`Session created: ${new_session.id}`);
     return new_session;
   }
 

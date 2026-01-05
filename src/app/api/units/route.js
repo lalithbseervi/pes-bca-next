@@ -1,4 +1,7 @@
 import { supabase } from "@/lib/supabase";
+import { createLogger } from "@/lib/logger";
+
+const log = createLogger('units_route');
 
 // GET /api/units?subject_id=1
 export async function GET(req) {
@@ -9,8 +12,10 @@ export async function GET(req) {
   if (subject_id) query = query.eq("subject_id", subject_id);
 
   const { data, error } = await query;
-  if (error) return new Response(JSON.stringify({ error: error.message }), { status: 400 });
-
+  if (error) {
+    log.error("Failed to fetch units", error);
+    return new Response(JSON.stringify({ error: error.message }), { status: 400 });
+  }
   return new Response(JSON.stringify(data), { status: 200 });
 }
 
@@ -23,7 +28,10 @@ export async function POST(req) {
     .insert({ subject_id, unit_number, title })
     .select();
 
-  if (error) return new Response(JSON.stringify({ error: error.message }), { status: 400 });
+  if (error) {
+    log.error(`Failed to create unit: subject=${subject_id}`, error);
+    return new Response(JSON.stringify({ error: error.message }), { status: 400 });
+  }
   return new Response(JSON.stringify(data[0]), { status: 200 });
 }
 
@@ -37,7 +45,10 @@ export async function PUT(req) {
     .eq("id", id)
     .select();
 
-  if (error) return new Response(JSON.stringify({ error: error.message }), { status: 400 });
+  if (error) {
+    log.error(`Failed to update unit: ${id}`, error);
+    return new Response(JSON.stringify({ error: error.message }), { status: 400 });
+  }
   return new Response(JSON.stringify(data[0]), { status: 200 });
 }
 
@@ -47,6 +58,9 @@ export async function DELETE(req) {
   const { id } = body;
 
   const { error } = await supabase.from("units").delete().eq("id", id);
-  if (error) return new Response(JSON.stringify({ error: error.message }), { status: 400 });
+  if (error) {
+    log.error(`Failed to delete unit: ${id}`, error);
+    return new Response(JSON.stringify({ error: error.message }), { status: 400 });
+  }
   return new Response(JSON.stringify({ success: true }), { status: 200 });
 }

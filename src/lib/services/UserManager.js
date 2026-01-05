@@ -1,3 +1,7 @@
+import { createLogger } from "@/lib/logger.js";
+
+const log = createLogger('UserManager');
+
 export class UserManager {
   constructor(supabase) {
     this.supabase = supabase;
@@ -10,6 +14,9 @@ export class UserManager {
       .eq("college_id", username.toUpperCase())
       .single();
 
+    if (!user) {
+      log.warn(`User not found for username: ${username}`);
+    }
     return user || null;
   }
 

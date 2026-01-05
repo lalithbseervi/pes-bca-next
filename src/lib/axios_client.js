@@ -4,8 +4,20 @@ import axios from 'axios';
  * Axios instance with automatic 401 handling
  * Intercepts all 401 responses and clears auth data
  */
+
+// Determine API URL - use environment variable, or detect from current host
+const getBaseURL = () => {
+  // In browser, use current location's origin (works for both localhost and network IPs)
+  if (typeof window !== 'undefined') {
+    return window.location.origin;
+  }
+  
+  // Server-side fallback
+  return 'http://localhost:3000';
+};
+
 const axiosClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000',
+  baseURL: getBaseURL(),
   withCredentials: true, // Include cookies in requests
   timeout: 30000, // 30 second timeout
 });

@@ -1,10 +1,14 @@
 import { supabase } from "@/lib/supabase";
+import { createLogger } from "@/lib/logger";
+
+const log = createLogger('resources_navigation_route');
 
 export async function GET(req) {
   const { searchParams } = new URL(req.url);
   const id = searchParams.get("id");
 
   if (!id) {
+    log.warn("Navigation request missing resource ID");
     return new Response(JSON.stringify({ error: "Missing resource ID" }), {
       status: 400,
     });
@@ -19,6 +23,7 @@ export async function GET(req) {
       .single();
 
     if (!current) {
+      log.warn(`Resource not found: ${id}`);
       return new Response(JSON.stringify({ error: "Resource not found" }), {
         status: 404,
       });
@@ -41,6 +46,7 @@ export async function GET(req) {
 
     return new Response(JSON.stringify(navigation), { status: 200 });
   } catch (err) {
+    log.error("Navigation fetch failed", err);
     return new Response(JSON.stringify({ error: err.message }), {
       status: 500,
     });

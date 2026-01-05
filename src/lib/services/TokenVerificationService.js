@@ -1,5 +1,8 @@
 import { verifyJWT } from "@/lib/sign_jwt";
 import { TokenManager } from "./TokenManager";
+import { createLogger } from "@/lib/logger";
+
+const log = createLogger('TokenVerificationService');
 
 export class TokenVerificationService {
   constructor(jwt_secret, refresh_jwt_secret, access_ttl = 24 * 60 * 60) {
@@ -25,17 +28,26 @@ export class TokenVerificationService {
    */
   async verifyAccessToken(access_token) {
     try {
-      if (!access_token) return null;
+      if (!access_token) {
+        log.warn("Access token is missing");
+        return null;
+      }
       
       const decoded = await verifyJWT(access_token, this.jwt_secret);
-      if (!decoded.valid) return null;
+      if (!decoded.valid) {
+        log.warn("Access token is invalid");
+        return null;
+      }
       
       // Verify token type is 'access'
-      if (decoded.payload?.type !== 'access') return null;
+      if (decoded.payload?.type !== 'access') {
+        log.warn("Token type is not 'access'");
+        return null;
+      }
       
       return decoded.payload;
     } catch (error) {
-      console.error("Failed to verify access token:", error.message);
+      log.error("Failed to verify access token", error);
       return null;
     }
   }
@@ -47,17 +59,26 @@ export class TokenVerificationService {
    */
   async verifyRefreshToken(refresh_token) {
     try {
-      if (!refresh_token) return null;
+      if (!refresh_token) {
+        log.warn("Refresh token is missing");
+        return null;
+      }
       
       const decoded = await verifyJWT(refresh_token, this.refresh_jwt_secret);
-      if (!decoded.valid) return null;
+      if (!decoded.valid) {
+        log.warn("Refresh token is invalid");
+        return null;
+      }
       
       // Verify token type is 'refresh'
-      if (decoded.payload?.type !== 'refresh') return null;
+      if (decoded.payload?.type !== 'refresh') {
+        log.warn("Token type is not 'refresh'");
+        return null;
+      }
       
       return decoded.payload;
     } catch (error) {
-      console.error("Failed to verify refresh token:", error.message);
+      log.error("Failed to verify refresh token", error);
       return null;
     }
   }
@@ -103,12 +124,13 @@ export class TokenVerificationService {
           new_access_token,
         };
       } catch (error) {
-        console.error("Failed to generate new access token:", error.message);
+        log.error("Failed to generate new access token from refresh token", error);
         return { valid: false };
       }
     }
 
     // Both tokens are invalid/expired
+    log.warn("Both access and refresh tokens are invalid/expired");
     return { valid: false };
   }
 }

@@ -19,6 +19,7 @@ export async function POST(request) {
 
     const auth = await token_service.getUserContext(access_token, refresh_token);
     if (!auth.valid) {
+      log.warn("Profile completion request unauthorized");
       return new Response(
         JSON.stringify({ success: false, error: "Unauthorized" }),
         { status: 401 }
@@ -62,7 +63,7 @@ export async function POST(request) {
         .single();
 
       if (error) {
-        log.error("Failed to update user", error.message);
+        log.error("Failed to update user profile", error);
         return new Response(JSON.stringify({ success: false, error: error.message }), {
           status: 400,
         });
@@ -111,7 +112,7 @@ export async function POST(request) {
 
     return new Response(JSON.stringify({ success: true, profile }), { status: 200 });
   } catch (err) {
-    log.error("profile completion failed", err);
+    log.error("Profile completion failed", err);
     return new Response(JSON.stringify({ success: false, error: "Internal Server Error" }), {
       status: 500,
     });

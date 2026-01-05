@@ -1,3 +1,7 @@
+import { createLogger } from "./logger"
+
+const log = createLogger('cookies.js');
+
 // Detect environment from hostname using a ternary; default to local-friendly when unknown
 function isLocalFromRequest(request) {
   try {

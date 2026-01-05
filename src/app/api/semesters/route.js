@@ -1,4 +1,7 @@
 import { supabase } from "@/lib/supabase";
+import { createLogger } from "@/lib/logger";
+
+const log = createLogger('semesters_route');
 
 // GET /api/semesters?course_id=1
 export async function GET(req) {
@@ -9,7 +12,10 @@ export async function GET(req) {
   if (course_id) query = query.eq("course_id", course_id);
 
   const { data, error } = await query;
-  if (error) return new Response(JSON.stringify({ error: error.message }), { status: 400 });
+  if (error) {
+    log.error("Failed to fetch semesters", error);
+    return new Response(JSON.stringify({ error: error.message }), { status: 400 });
+  }
 
   return new Response(JSON.stringify(data), { status: 200 });
 }
@@ -23,7 +29,10 @@ export async function POST(req) {
     .insert({ course_id, semester_number, title })
     .select();
 
-  if (error) return new Response(JSON.stringify({ error: error.message }), { status: 400 });
+  if (error) {
+    log.error(`Failed to create semester: course=${course_id}`, error);
+    return new Response(JSON.stringify({ error: error.message }), { status: 400 });
+  }
   return new Response(JSON.stringify(data[0]), { status: 200 });
 }
 
@@ -37,7 +46,10 @@ export async function PUT(req) {
     .eq("id", id)
     .select();
 
-  if (error) return new Response(JSON.stringify({ error: error.message }), { status: 400 });
+  if (error) {
+    log.error(`Failed to update semester: ${id}`, error);
+    return new Response(JSON.stringify({ error: error.message }), { status: 400 });
+  }
   return new Response(JSON.stringify(data[0]), { status: 200 });
 }
 
@@ -47,6 +59,9 @@ export async function DELETE(req) {
   const { id } = body;
 
   const { error } = await supabase.from("semesters").delete().eq("id", id);
-  if (error) return new Response(JSON.stringify({ error: error.message }), { status: 400 });
+  if (error) {
+    log.error(`Failed to delete semester: ${id}`, error);
+    return new Response(JSON.stringify({ error: error.message }), { status: 400 });
+  }
   return new Response(JSON.stringify({ success: true }), { status: 200 });
 }

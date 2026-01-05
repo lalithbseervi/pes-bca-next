@@ -1,4 +1,7 @@
 import { supabase } from "@/lib/supabase";
+import { createLogger } from "@/lib/logger";
+
+const log = createLogger('download_route');
 
 export async function GET(req) {
   const { searchParams } = new URL(req.url);
@@ -6,6 +9,7 @@ export async function GET(req) {
   const view_file = searchParams.get("view_file");
 
   if (!key && !view_file) {
+    log.warn("Download request missing storage key");
     return new Response(JSON.stringify({ error: "Missing storage key" }), {
       status: 400,
     });
@@ -18,6 +22,7 @@ export async function GET(req) {
       .download(fileToGet);
 
     if (error) {
+      log.error(`Failed to download file: ${fileToGet}`, error);
       return new Response(error, { status: 404 });
     }
 
@@ -44,6 +49,7 @@ export async function GET(req) {
       });
     }
   } catch (err) {
+    log.error(`Download error: ${err.message}`, err);
     return new Response(JSON.stringify({ error: err.message }), {
       status: 400,
     });

@@ -1,5 +1,8 @@
 import { supabase } from "@/lib/supabase";
 import { generateETag } from "@/lib/etag";
+import { createLogger } from "@/lib/logger";
+
+const log = createLogger('resources_route');
 
 export async function POST(req) {
   const body = await req.json();
@@ -10,6 +13,7 @@ export async function POST(req) {
     .select();
 
   if (error) {
+    log.error("Failed to upsert resource", error);
     return new Response(JSON.stringify({ error: error.message }), { status: 400 });
   }
 
@@ -36,7 +40,10 @@ export async function GET(req) {
   if (resource_type) query = query.eq("resource_type", resource_type);
 
   const { data, error } = await query;
-  if (error) return new Response(JSON.stringify({ error: error.message }), { status: 400 });
+  if (error) {
+    log.error("Failed to fetch resources", error);
+    return new Response(JSON.stringify({ error: error.message }), { status: 400 });
+  }
 
   const jsonData = JSON.stringify(data);
   const etag = generateETag(jsonData);

@@ -1,14 +1,19 @@
 import { supabase } from "@/lib/supabase";
+import { createLogger } from "@/lib/logger";
+
+const log = createLogger('courses_route');
 
 // GET /api/courses
 export async function GET(req) {
   const { data, error } = await supabase.from("courses").select(`
       id, course_code, course_name
     `);
-  if (error)
+  if (error) {
+    log.error("Failed to fetch courses", error);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 400,
     });
+  }
   return new Response(JSON.stringify(data), { status: 200 });
 }
 
@@ -21,10 +26,12 @@ export async function POST(req) {
     .from("courses")
     .insert({ course_code, course_name })
     .select();
-  if (error)
+  if (error) {
+    log.error(`Failed to create course: ${course_code}`, error);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 400,
     });
+  }
 
   try {
     const course_id = data[0].id;
@@ -34,9 +41,12 @@ export async function POST(req) {
         .from("semesters")
         .insert({ course_id, semester_number: i, title })
         .select();
+      if (semError) {
+        log.warn(`Failed to create semester ${i} for course ${course_id}`, semError);
+      }
     }
   } catch (err) {
-    console.error(err);
+    log.error(`Error creating semesters for course`, err);
   }
 
   return new Response(JSON.stringify(data[0]), { status: 200 });
@@ -52,10 +62,12 @@ export async function PUT(req) {
     .update({ course_code, course_name })
     .eq("id", id)
     .select();
-  if (error)
+  if (error) {
+    log.error(`Failed to update course: ${id}`, error);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 400,
     });
+  }
 
   return new Response(JSON.stringify(data[0]), { status: 200 });
 }
@@ -66,10 +78,12 @@ export async function DELETE(req) {
   const { id } = body;
 
   const { error } = await supabase.from("courses").delete().eq("id", id);
-  if (error)
+  if (error) {
+    log.error(`Failed to delete course: ${id}`, error);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 400,
     });
+  }
 
   return new Response(JSON.stringify({ success: true }), { status: 200 });
 }

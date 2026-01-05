@@ -1,4 +1,7 @@
 import { signJWT, verifyJWT } from "@/lib/sign_jwt.js";
+import { createLogger } from "@/lib/logger.js";
+
+const log = createLogger('TokenManager');
 
 export class TokenManager {
   constructor(jwt_secret, refresh_secret, access_ttl, refresh_ttl) {
@@ -36,7 +39,7 @@ export class TokenManager {
     try {
       return await verifyJWT(token, this.jwt_secret);
     } catch (error) {
-      console.error("Failed to verify access token:", error);
+      log.error("Failed to verify access token", error);
       return { valid: false, reason: error.message };
     }
   }

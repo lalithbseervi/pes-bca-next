@@ -1,5 +1,8 @@
 import crypto from "crypto";
 import { supabase } from "@/lib/supabase";
+import { createLogger } from "@/lib/logger";
+
+const log = createLogger('auth_helpers');
 
 export async function getDeviceId(username, userAgent) {
   const encoder = new TextEncoder();
@@ -30,24 +33,32 @@ export async function resolveCourseId({ username, profile }) {
 
   if (match) {
     const code = match[1].toUpperCase();
+    log.info(`Attempting to resolve course by code: ${code}`);
     const { data: course } = await supabase
       .from("courses")
       .select("id")
       .eq("course_code", code)
       .single();
-    if (course) return course.id;
+    if (course) {
+      log.info(`Course resolved by code: ${course.id}`);
+      return course.id;
+    }
   }
 
   if (profile?.program) {
+    log.info(`Attempting to resolve course by program: ${profile.program}`);
     const { data: course } = await supabase
       .from("courses")
       .select("id")
       .eq("course_name", profile.program)
       .single();
-    if (course) return course.id;
+    if (course) {
+      log.info(`Course resolved by program: ${course.id}`);
+      return course.id;
+    }
   }
 
-  throw new Error(
-    `course_id couldn't be resolved for program ${profile?.program} and username ${username}`
-  );
+  const err = `course_id couldn't be resolved for program ${profile?.program} and username ${username}`;
+  log.error(err, new Error(err));
+  throw new Error(err);
 }
