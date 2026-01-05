@@ -2,11 +2,14 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import InstallPWAModal, { useInstallPrompt } from "@/components/InstallPWAModal";
 
 export default function Nav() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [showInstallModal, setShowInstallModal] = useState(false);
   const pathname = usePathname();
+  const { isInstallable, promptInstall } = useInstallPrompt();
 
   useEffect(() => {
     setMounted(true);
@@ -44,6 +47,19 @@ export default function Nav() {
     { href: "/terms-of-service", label: "Terms of Use", icon: "terms" },
     { href: "/privacy-policy", label: "Privacy Policy", icon: "privacy" },
   ];
+
+  const handleInstallClick = () => {
+    setShowInstallModal(true);
+    setMenuOpen(false);
+  };
+
+  const handleInstallConfirm = async () => {
+    const installed = await promptInstall();
+    setShowInstallModal(false);
+    if (installed) {
+      console.log("App installed successfully");
+    }
+  };
 
   const renderIcon = (iconType) => {
     const iconProps = {
@@ -108,6 +124,14 @@ export default function Nav() {
         return (
           <svg {...iconProps}>
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          </svg>
+        );
+      case "install":
+        return (
+          <svg {...iconProps}>
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
           </svg>
         );
       default:
@@ -178,6 +202,17 @@ export default function Nav() {
             </Link>
           ))}
 
+          {/* Temporarily show always for testing */}
+          <button
+            className="flex gap-4 items-center p-4 text-lg text-white"
+            onClick={handleInstallClick}
+          >
+            <div className="flex svg-container">
+              {renderIcon("install")}
+            </div>
+            <span>Install App {!isInstallable && "(Debug)"}</span>
+          </button>
+
           <button
             id="privacy-settings-mobile"
             className="flex gap-4 items-center p-4 text-lg text-white"
@@ -222,6 +257,18 @@ export default function Nav() {
               </Link>
             ))}
 
+            {/* Install App Button - Temporarily always shown for testing */}
+            <button
+              className="flex justify-start items-center text-white flex-1 ml-2 mr-4 rounded-md hover:ring hover:shadow-[#21c063]/50 hover:text-[#21c063] hover:cursor-pointer"
+              style={{ cursor: "pointer", maxHeight: "4vh" }}
+              onClick={handleInstallClick}
+            >
+              <div className="flex svg-container p-2">
+                {renderIcon("install")}
+              </div>
+              <span className="opacity-0 group-hover:opacity-100 transition-all duration-500">Install App{!isInstallable}</span>
+            </button>
+
             {/* Privacy Settings Button */}
             <button
               id="privacy-settings-button"
@@ -249,6 +296,13 @@ export default function Nav() {
           </div>
         </nav>
       )}
+
+      {/* Install PWA Modal */}
+      <InstallPWAModal
+        visible={showInstallModal}
+        onClose={() => setShowInstallModal(false)}
+        onInstall={handleInstallConfirm}
+      />
     </>
   );
 }

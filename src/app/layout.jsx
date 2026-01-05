@@ -4,7 +4,7 @@ import ClientLayout from "@/components/ClientLayout";
 export const metadata = {
   title: "pes-bca",
   description: "A read-only dashboard for accessing PESU Academy content.",
-  manifest: "/manifest.json",
+  manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
