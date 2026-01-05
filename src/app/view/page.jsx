@@ -18,6 +18,7 @@ export default function ViewResourcePage() {
   function handleWindowSizeChange() {
     setWidth(window.innerWidth);
   }
+
   useEffect(() => {
     window.addEventListener("resize", handleWindowSizeChange);
     return () => {
@@ -30,7 +31,7 @@ export default function ViewResourcePage() {
   // Set page title dynamically based on resource
   useEffect(() => {
     if (resourceData) {
-      document.title = `${resourceData.filename} | pes-bca`;
+      document.title = `${resourceData.link_text} | pes-bca`;
     } else {
       document.title = "View Resource | pes-bca";
     }
