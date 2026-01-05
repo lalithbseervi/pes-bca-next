@@ -86,7 +86,7 @@ export async function proxy(request) {
     object-src 'none';
     base-uri 'self';
     form-action 'self';
-    frame-ancestors 'none';
+    frame-ancestors 'self';
     upgrade-insecure-requests;
 `;
   // Replace newline characters and spaces
@@ -98,7 +98,10 @@ export async function proxy(request) {
 
   requestHeaders.set("x-nonce", nonce);
 
-  response.headers.set("Content-Type", "application/json")
+  // Only set Content-Type to JSON for non-file routes
+  if (!request.nextUrl.pathname.includes("/api/download")) {
+    response.headers.set("Content-Type", "application/json");
+  }
 
   response.headers.set(
     "Content-Security-Policy",

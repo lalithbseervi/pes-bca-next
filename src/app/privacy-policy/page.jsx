@@ -13,6 +13,7 @@ const PrivacyPolicy = () => {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    document.title = "Privacy Policy | pes-bca";
     setIsClient(true);
   }, []);
 

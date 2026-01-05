@@ -27,6 +27,15 @@ export default function ViewResourcePage() {
 
   const isMobile = width <= 768;
 
+  // Set page title dynamically based on resource
+  useEffect(() => {
+    if (resourceData) {
+      document.title = `${resourceData.filename} | pes-bca`;
+    } else {
+      document.title = "View Resource | pes-bca";
+    }
+  }, [resourceData]);
+
   const resourceMapping = {
     slides: "Slides",
     QA: "Question Answers",
@@ -43,7 +52,7 @@ export default function ViewResourcePage() {
 
     const fetchResource = async () => {
       // Fetch resource details
-      const { data: resourceData } = await axiosClient.get(`/api/resources?file=${storageKey}`);
+      const { data: resourceData } = await axiosClient.get(`/api/resources?file=${storageKey}&include_id=true`);
 
       if (resourceData && resourceData.length > 0) {
         const resource = resourceData[0];
@@ -194,7 +203,7 @@ export default function ViewResourcePage() {
           {navigation.prev ? (
             <Link
               href={`/view/?file=${navigation.prev.storage_key}`}
-              className="flex items-center md:gap-2 hover:text-blue-600"
+              className="flex items-center md:gap-2 hover:text-blue-300"
             >
               {isMobile ? mobile_prev_nav_svg : prev_nav_svg}
               <span className={isMobile ? "ml-2" : "ml-0"}>{navigation.prev.link_text}</span>
@@ -211,7 +220,7 @@ export default function ViewResourcePage() {
           {navigation.next ? (
             <Link
               href={`/view/?file=${navigation.next.storage_key}`}
-              className="flex items-center justify-end md:gap-2 hover:text-blue-600"
+              className="flex items-center justify-end md:gap-2 hover:text-blue-300"
             >
               <span>{navigation.next.link_text}</span>
               {isMobile ? mobile_next_nav_svg : next_nav_svg}

@@ -21,6 +21,11 @@ export default function AuthenticatePage() {
 
   const redirectTo = searchParams?.get("redirect") || "/";
 
+  // Set page title
+  useEffect(() => {
+    document.title = "Login | pes-bca";
+  }, []);
+
   const handleUsernameChange = (e) => {
     const username_val = String(e.target.value);
     if (srn_pattern.test(username_val)) {

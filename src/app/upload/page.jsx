@@ -23,6 +23,11 @@ export default function ResourceUploadPage() {
   const [pendingResources, setPendingResources] = useState([]);
   const fileInputRef = useRef(null);
 
+  // Set page title
+  useEffect(() => {
+    document.title = "Upload Resources | pes-bca";
+  }, []);
+
   /* fetch semesters */
   useEffect(() => {
     const abortController = new AbortController();
@@ -318,7 +323,7 @@ export default function ResourceUploadPage() {
       <button
         onClick={handleUpload}
         disabled={uploading || pendingResources.length === 0}
-        className="bg-blue-600 disabled:bg-gray-400 text-white px-4 py-2 rounded hover:cursor-pointer"
+        className="bg-blue-300 disabled:bg-gray-400 text-white px-4 py-2 rounded hover:cursor-pointer"
       >
         {uploading ? "Uploading..." : "Upload"}
       </button>

@@ -35,6 +35,7 @@ export async function GET(req) {
           "Content-Disposition": `inline; filename="${fileToGet
             .split("/")
             .pop()}"`,
+          "X-Frame-Options": "SAMEORIGIN",
         },
       });
     } else if (key) {

@@ -20,6 +20,11 @@ export default function Dashboard() {
 
   const { session } = useSession();
 
+  // Set page title
+  useEffect(() => {
+    document.title = "Dashboard | pes-bca";
+  }, []);
+
   // Fetch semesters for user's course
   useEffect(() => {
     const abortController = new AbortController();

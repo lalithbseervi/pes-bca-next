@@ -18,6 +18,11 @@ const Download = () => {
   const [downloading, setDownloading] = useState(false);
   const [resources, setResources] = useState([]);
 
+  // Set page title
+  useEffect(() => {
+    document.title = "Download Resources | pes-bca";
+  }, []);
+
   /* fetch semesters */
   useEffect(() => {
     const abortController = new AbortController();

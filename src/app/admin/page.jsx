@@ -26,6 +26,11 @@ export default function AdminPanel() {
   const [unitNumber, setUnitNumber] = useState("");
   const [unitTitle, setUnitTitle] = useState("");
 
+  // Set page title
+  useEffect(() => {
+    document.title = "Admin Panel | pes-bca";
+  }, []);
+
   // --- Fetch Functions ---
   const fetchCourses = async () => {
     try {
