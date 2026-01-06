@@ -282,6 +282,7 @@ export default function ResourceTable({ semesterId, subjectId, resourceType }) {
                   <td className="border px-2 md:p-2 text-center whitespace-nowrap overflow-x-auto min-w-28 lg:max-w-[8vw]">
                     <Link
                       href={`/view/?file=${res.storage_key}`}
+                      prefetch={false}
                       className="text-blue-500 underline"
                     >
                       View
@@ -289,6 +290,7 @@ export default function ResourceTable({ semesterId, subjectId, resourceType }) {
                     |&nbsp;
                     <Link
                       href={`/api/download/?file=${res.storage_key}`}
+                      prefetch={false}
                       className="text-blue-500 underline"
                     >
                       Download

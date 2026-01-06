@@ -203,6 +203,7 @@ export default function ViewResourcePage() {
         <div className="border md:border-2 rounded-lg p-2 md:p-4 md:w-max">
           {navigation.prev ? (
             <Link
+              prefetch={false}
               href={`/view/?file=${navigation.prev.storage_key}`}
               className="flex items-center md:gap-2 hover:text-blue-300"
             >
@@ -220,6 +221,7 @@ export default function ViewResourcePage() {
         <div className="border md:border-2 rounded-lg p-2 md:p-4 md:w-max">
           {navigation.next ? (
             <Link
+              prefetch={false}
               href={`/view/?file=${navigation.next.storage_key}`}
               className="flex items-center justify-end md:gap-2 hover:text-blue-300"
             >
