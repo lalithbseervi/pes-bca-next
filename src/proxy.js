@@ -50,7 +50,7 @@ export async function proxy(request) {
       route => pathname === route.path && route.methods.includes(method)
     );
 
-    if (isAdminRoute && !auth_result.user_context?.is_admin) {
+    if (isAdminRoute && !auth_result.user_context?.profile?.is_admin) {
       return NextResponse.json(
         { 
           success: false, 
