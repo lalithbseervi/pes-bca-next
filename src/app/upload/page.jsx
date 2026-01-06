@@ -59,9 +59,11 @@ export default function ResourceUploadPage() {
 
   /* fetch subjects */
   useEffect(() => {
-    if (!semesters || !semID) {
+    if (!semID) {
       setSubjects([]);
       setSubjectId("");
+      setUnits([]);
+      setUnitId("");
       return;
     }
 
@@ -69,13 +71,21 @@ export default function ResourceUploadPage() {
 
     const fetchSubjects = async () => {
       try {
-        if (!session) return;
-        if (subjects.length === 0) {
-          const { data } = await axiosClient.get(`/api/subjects?semester_id=${session?.current_sem_db}`, {
+        const selectedSemester = semesters.find(
+          (s) => String(s.semester_number) === String(semID)
+        );
+        if (!selectedSemester) return;
+
+        const { data } = await axiosClient.get(
+          `/api/subjects?semester_id=${selectedSemester.id}`,
+          {
             signal: abortController.signal,
-          });
-          setSubjects(data);
-        }
+          }
+        );
+        setSubjects(data);
+        setSubjectId("");
+        setUnits([]);
+        setUnitId("");
       } catch (error) {
         if (error.name === "AbortError") {
           console.log("Fetch aborted");
@@ -87,7 +97,7 @@ export default function ResourceUploadPage() {
 
     fetchSubjects();
     return () => abortController.abort();
-  }, [semID]);
+  }, [semID, semesters]);
 
   /* fetch units by subjectId */
   useEffect(() => {
