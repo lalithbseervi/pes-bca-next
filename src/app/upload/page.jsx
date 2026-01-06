@@ -122,13 +122,20 @@ export default function ResourceUploadPage() {
     const files = Array.from(e.target.files);
     if (files.length === 0) return;
 
+    const generateLinkText = (filename) => {
+      return filename
+        .replace(/^\d{1,2}_/, "") // Remove 1-2 digit prefix with underscore
+        .replace(/_[^_]*$/, "") // Remove from last underscore to end
+        .replace(/_/g, " "); // Replace remaining underscores with spaces
+    };
+
     setPendingResources((prev) => [
       ...prev,
       ...files.map((file) => ({
         id: crypto.randomUUID(),
         file,
         filename: file.name,
-        linkText: file.name,
+        linkText: generateLinkText(file.name),
         resourceType,
       })),
     ]);
