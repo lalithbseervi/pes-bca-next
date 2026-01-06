@@ -59,6 +59,9 @@ export default function ClientLayout({ children }) {
     }
   }, [session, isAuthRoute, pathname, search, redirectParam, router, mounted]);
 
+  // Memoize context value to prevent unnecessary re-renders of children
+  const contextValue = useMemo(() => ({ session, setSession }), [session]);
+
   if (!mounted) {
     return null;
   }
@@ -72,7 +75,7 @@ export default function ClientLayout({ children }) {
   }
 
   return (
-    <SessionContext.Provider value={useMemo(() => ({ session, setSession }), [session])}>
+    <SessionContext.Provider value={contextValue}>
       <ServiceWorkerRegistration />
       <AnalyticsConsentBanner user={session} />
       <div className="flex min-h-screen flex-col md:flex-row p-0 m-0">
