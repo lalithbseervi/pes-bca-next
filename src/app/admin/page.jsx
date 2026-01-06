@@ -1,8 +1,32 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useSession } from "@/components/ClientLayout";
 import axiosClient from "@/lib/axios_client";
 
 export default function AdminPanel() {
+  const { session } = useSession();
+  const router = useRouter();
+
+  // Check admin access
+  useEffect(() => {
+    if (session && !session.is_admin) {
+      router.push('/');
+    }
+  }, [session, router]);
+
+  // Don't render anything if not admin
+  if (!session?.is_admin) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">Access Denied</h1>
+          <p className="text-neutral-400">You don't have permission to access this page.</p>
+        </div>
+      </div>
+    );
+  }
+
   // Courses
   const [courses, setCourses] = useState([]);
   const [courseCode, setCourseCode] = useState("");

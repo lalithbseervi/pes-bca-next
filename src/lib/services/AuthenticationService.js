@@ -188,6 +188,7 @@ export class AuthenticationService {
       user_id: user.id,
       course_code: course_code,
       current_semester: user.current_semester,
+      is_admin: user.is_admin || false,
     };
 
     const { access_token, refresh_token } =

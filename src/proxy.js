@@ -16,9 +16,22 @@ const corsOptions = {
  */
 const PUBLIC_PATHS = ["/api/authenticate"];
 
+/**
+ * Admin-only API routes (POST, PUT, DELETE operations)
+ */
+const ADMIN_ROUTES = [
+  { path: "/api/courses", methods: ["POST", "PUT", "DELETE"] },
+  { path: "/api/semesters", methods: ["POST", "PUT", "DELETE"] },
+  { path: "/api/subjects", methods: ["POST", "PUT", "DELETE"] },
+  { path: "/api/units", methods: ["POST", "PUT", "DELETE"] },
+];
+
 export async function proxy(request) {
+  const pathname = request.nextUrl.pathname;
+  const method = request.method;
+
   // Skip authentication check for public paths
-  if (!PUBLIC_PATHS.includes(request.nextUrl.pathname)) {
+  if (!PUBLIC_PATHS.includes(pathname)) {
     const auth_result = await validateRequest(request);
     
     if (!auth_result.valid) {
@@ -29,6 +42,22 @@ export async function proxy(request) {
           reason: auth_result.reason
         },
         { status: auth_result.status }
+      );
+    }
+
+    // Check admin access for admin routes
+    const isAdminRoute = ADMIN_ROUTES.some(
+      route => pathname === route.path && route.methods.includes(method)
+    );
+
+    if (isAdminRoute && !auth_result.user_context?.is_admin) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          message: "Forbidden",
+          reason: "admin_access_required"
+        },
+        { status: 403 }
       );
     }
 
