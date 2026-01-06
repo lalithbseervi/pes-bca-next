@@ -59,12 +59,30 @@ export default function ResourceTable({ semesterId, subjectId, resourceType }) {
 
     const fetchResources = async () => {
       const resourceCacheKey = `res_${activeUnitId}`;
-      const cachedResources = localStorage.getItem(resourceCacheKey);
-      const cachedETag = localStorage.getItem(`etag_${activeUnitId}`);
+      
+      // Safely access localStorage (may not exist in SSR or be blocked)
+      let cachedResources = null;
+      let cachedETag = null;
+      let cachedFilterETag = null;
+      
+      if (typeof window !== 'undefined' && window.localStorage) {
+        try {
+          cachedResources = localStorage.getItem(resourceCacheKey);
+          cachedETag = localStorage.getItem(`etag_${activeUnitId}`);
+        } catch (e) {
+          console.warn('localStorage access failed:', e);
+        }
+      }
       
       // Generate filter-specific ETag key
       const filterETagKey = resourceType ? `etag_${activeUnitId}_${resourceType}` : null;
-      const cachedFilterETag = resourceType ? localStorage.getItem(filterETagKey) : null;
+      if (filterETagKey && typeof window !== 'undefined' && window.localStorage) {
+        try {
+          cachedFilterETag = localStorage.getItem(filterETagKey);
+        } catch (e) {
+          console.warn('localStorage access failed:', e);
+        }
+      }
 
       const url = `/api/resources?subject_id=${subjectId}&unit_id=${activeUnitId}${resourceType ? `&resource_type=${resourceType}` : ''}`;
 
@@ -108,10 +126,12 @@ export default function ResourceTable({ semesterId, subjectId, resourceType }) {
                 cachedAll = [...cachedAll, ...newData];
 
                 // Update localStorage with merged data
-                localStorage.setItem(resourceCacheKey, JSON.stringify(cachedAll));
-                
-                // Update filter-specific ETag
-                localStorage.setItem(filterETagKey, newETag);
+                try {
+                  localStorage.setItem(resourceCacheKey, JSON.stringify(cachedAll));
+                  localStorage.setItem(filterETagKey, newETag);
+                } catch (e) {
+                  console.warn('localStorage write failed:', e);
+                }
 
                 // Update displayed resources with new filtered data
                 setResources(newData);
@@ -149,10 +169,19 @@ export default function ResourceTable({ semesterId, subjectId, resourceType }) {
         if (res.status === 200) {
           const data = res.data;
           const newETag = res.headers["etag"];
+try {
+            localStorage.setItem(resourceCacheKey, JSON.stringify(data));
+            localStorage.setItem(`etag_${activeUnitId}`, newETag);
 
-          // Store all resources for this unit
-          localStorage.setItem(resourceCacheKey, JSON.stringify(data));
-          localStorage.setItem(`etag_${activeUnitId}`, newETag);
+            // If filtering, generate and store filter-specific ETag
+            if (resourceType && filterETagKey) {
+              const displayResources = data.filter((r) => r.resource_type === resourceType);
+              const filteredETag = generateETag(JSON.stringify(displayResources));
+              localStorage.setItem(filterETagKey, filteredETag);
+            }
+          } catch (e) {
+            console.warn('localStorage write failed:', e);
+          }
 
           // If filtering, generate and store filter-specific ETag
           let displayResources = data;
