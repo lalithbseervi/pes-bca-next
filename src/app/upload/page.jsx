@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { supabase } from "@/lib/supabase";
 import { useSession } from "@/components/ClientLayout";
 import axiosClient from "@/lib/axios_client";
 
@@ -172,21 +171,25 @@ export default function ResourceUploadPage() {
       for (const r of pendingResources) {
         const storageKey = `${courseCode}/sem-${semID}/${subjectName}/unit-${folderUnitNumber}/${r.resourceType}/${r.file.name}`;
 
-        // upload file
-        const { error } = await supabase.storage
-          .from("nextFileBucket")
-          .upload(storageKey, r.file, { upsert: false });
+        // Prepare FormData for file upload
+        const formData = new FormData();
+        formData.append("file", r.file);
+        formData.append("storageKey", storageKey);
+        formData.append("unitId", currentUnitId);
+        formData.append("resourceType", r.resourceType);
+        formData.append("filename", r.filename);
+        formData.append("linkText", r.linkText);
 
-        if (error) throw error;
-
-        // insert DB record
-        await axiosClient.post("/api/resources", {
-          unit_id: currentUnitId,
-          resource_type: r.resourceType,
-          filename: r.filename,
-          storage_key: storageKey,
-          link_text: r.linkText,
+        // Upload via API route (backend handles Supabase interaction)
+        const response = await axiosClient.post("/api/upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         });
+
+        if (!response.data.success) {
+          throw new Error(response.data.message || "Upload failed");
+        }
       }
 
       setPendingResources([]);
