@@ -62,17 +62,8 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(request).then((cachedResponse) => {
       if (cachedResponse) {
-        // Return cached response and update cache in background
-        const fetchPromise = fetch(request).then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200) {
-            const responseToCache = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(request, responseToCache);
-            });
-          }
-          return networkResponse;
-        }).catch(() => cachedResponse);
-        
+        // Return cached response immediately without background fetch
+        // Background updates only happen on service worker activation, not on every request
         return cachedResponse;
       }
 

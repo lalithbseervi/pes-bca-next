@@ -66,7 +66,7 @@ const Download = () => {
       }
     };
     fetchSubjects();
-  }, []);
+  }, [session, semesters, subjects.length]);
 
   /* fetch units by subjectId */
   useEffect(() => {
