@@ -8,7 +8,7 @@ export async function GET(req) {
   const { searchParams } = new URL(req.url);
   const semester_id = searchParams.get("semester_id");
 
-  let query = supabase.from("subjects").select("id, semester_id, name");
+  let query = supabase.from("subjects").select("id, semester_id, name, shortcode");
   if (semester_id) query = query.eq("semester_id", semester_id);
 
   const { data, error } = await query;

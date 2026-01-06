@@ -26,6 +26,16 @@ const ADMIN_ROUTES = [
   { path: "/api/units", methods: ["POST", "PUT", "DELETE"] },
 ];
 
+/**
+ * API endpoints that should never be cached (admin-managed resources)
+ */
+const NO_CACHE_ENDPOINTS = [
+  "/api/courses",
+  "/api/semesters", 
+  "/api/subjects",
+  "/api/units",
+];
+
 export async function proxy(request) {
   const pathname = request.nextUrl.pathname;
   const method = request.method;
@@ -156,7 +166,14 @@ export async function proxy(request) {
 
   response.headers.set("Access-Control-Max-Age", corsOptions.maxAge);
 
-  if (!response.headers.get('Cache-Control') || !response.headers.get('ETag')) {
+  // Check if this endpoint is admin-managed (should never be cached)
+  const isNoCacheEndpoint = NO_CACHE_ENDPOINTS.some(path => pathname === path);
+
+  if (isNoCacheEndpoint) {
+    // Never cache admin-managed resources to prevent stale data
+    response.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+  } else if (!response.headers.get('Cache-Control') || !response.headers.get('ETag')) {
+    // Default cache for other routes
     response.headers.set('Cache-Control', 'private, max-age=3600, must-revalidate, immutable, stale-if-error=3600');
   }
 
