@@ -23,7 +23,7 @@ export default function AuthenticatePage() {
 
   // Set page title
   useEffect(() => {
-    document.title = "Login | pes-bca";
+    document.title = "Login | lms";
   }, []);
 
   const handleUsernameChange = (e) => {

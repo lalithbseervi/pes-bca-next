@@ -21,7 +21,7 @@ const Download = () => {
 
   // Set page title
   useEffect(() => {
-    document.title = "Download Resources | pes-bca";
+    document.title = "Download Resources | lms";
   }, []);
 
   /* fetch semesters */

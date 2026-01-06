@@ -1,9 +1,9 @@
 export default function manifest() {
   return {
-    name: 'PES BCA Resources',
-    short_name: 'PES BCA',
+    name: 'Unofficial LMS',
+    short_name: 'Unofficial LMS',
     lang: 'en',
-    description: 'pes-bca webapp built with Next.js',
+    description: 'lms webapp built with Next.js',
     start_url: '/',
     display: 'standalone',
     background_color: '#ffffff',

@@ -31,9 +31,9 @@ export default function ViewResourcePage() {
   // Set page title dynamically based on resource
   useEffect(() => {
     if (resourceData) {
-      document.title = `${resourceData.link_text} | pes-bca`;
+      document.title = `${resourceData.link_text} | lms`;
     } else {
-      document.title = "View Resource | pes-bca";
+      document.title = "View Resource | lms";
     }
   }, [resourceData]);
 

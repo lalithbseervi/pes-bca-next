@@ -24,7 +24,7 @@ export default function ResourceUploadPage() {
 
   // Set page title
   useEffect(() => {
-    document.title = "Upload Resources | pes-bca";
+    document.title = "Upload Resources | lms";
   }, []);
 
   /* fetch semesters */

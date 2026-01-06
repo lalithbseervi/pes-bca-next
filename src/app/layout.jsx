@@ -8,7 +8,7 @@ export const metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "pes-bca",
+    title: "lms",
   },
   formatDetection: {
     telephone: false,
