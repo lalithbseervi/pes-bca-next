@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useMemo } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import Nav from "@/components/nav";
@@ -72,7 +72,7 @@ export default function ClientLayout({ children }) {
   }
 
   return (
-    <SessionContext.Provider value={{ session, setSession }}>
+    <SessionContext.Provider value={useMemo(() => ({ session, setSession }), [session])}>
       <ServiceWorkerRegistration />
       <AnalyticsConsentBanner user={session} />
       <div className="flex min-h-screen flex-col md:flex-row p-0 m-0">
