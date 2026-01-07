@@ -9,7 +9,7 @@ export default function InstallPWAModal({ visible, onClose, onInstall }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4">
       <div className="w-full max-w-md rounded-lg border border-neutral-700 bg-neutral-900 shadow-2xl p-6 space-y-4">
         <header className="space-y-1">
-          <h2 className="text-xl font-bold">Install lms App</h2>
+          <h2 className="text-xl font-bold">Install LMS App</h2>
           <p className="text-sm text-neutral-300">
             Install this app on your device for quick access and a better experience.
           </p>

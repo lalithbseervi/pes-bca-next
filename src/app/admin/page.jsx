@@ -56,7 +56,7 @@ export default function AdminPanel() {
 
   // Set page title
   useEffect(() => {
-    document.title = "Admin Panel | lms";
+    document.title = "Admin Panel | LMS";
   }, []);
 
   // --- Fetch Functions ---

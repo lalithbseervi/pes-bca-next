@@ -26,7 +26,7 @@ const Download = () => {
 
   // Set page title
   useEffect(() => {
-    document.title = "Download Resources | lms";
+    document.title = "Download Resources | LMS";
   }, []);
 
   /* fetch semesters */

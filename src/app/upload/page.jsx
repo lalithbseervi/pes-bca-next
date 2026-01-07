@@ -29,7 +29,7 @@ export default function ResourceUploadPage() {
 
   // Set page title
   useEffect(() => {
-    document.title = "Upload Resources | lms";
+    document.title = "Upload Resources | LMS";
   }, []);
 
   /* fetch semesters */

@@ -23,7 +23,7 @@ export default function Dashboard() {
 
   // Set page title
   useEffect(() => {
-    document.title = "Dashboard | lms";
+    document.title = "Dashboard | LMS";
   }, []);
 
   // Fetch semesters for user's course
@@ -86,7 +86,7 @@ export default function Dashboard() {
 
   return (
     <>
-      <h1 className="text-lg md:text-xl p-2 font-bold text-gray-900 dark:text-gray-100">Homepage | lms</h1>
+      <h1 className="text-lg md:text-xl p-2 font-bold text-gray-900 dark:text-gray-100">Homepage | LMS</h1>
       <div className="p-2 flex flex-col md:flex-row gap-2 lg:flex-1/2 lg:gap-4 lg:max-w-4xl">
         {/* Semester Select */}
         <div className="flex-1 min-w-0 lg:max-w-[10vw]">

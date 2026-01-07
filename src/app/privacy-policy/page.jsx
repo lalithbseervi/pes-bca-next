@@ -13,7 +13,7 @@ const PrivacyPolicy = () => {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    document.title = "Privacy Policy | lms";
+    document.title = "Privacy Policy | LMS";
     setIsClient(true);
   }, []);
 

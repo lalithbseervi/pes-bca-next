@@ -24,7 +24,7 @@ export default function AuthenticatePage() {
 
   // Set page title
   useEffect(() => {
-    document.title = "Login | lms";
+    document.title = "Login | LMS";
   }, []);
 
   const handleUsernameChange = (e) => {

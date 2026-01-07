@@ -11,7 +11,7 @@ export default function PrivacySettingsPage() {
   const user = session;
 
   useEffect(() => {
-    document.title = "Privacy Settings | lms";
+    document.title = "Privacy Settings | LMS";
   }, []);
 
   return <PrivacySettings user={user} />;

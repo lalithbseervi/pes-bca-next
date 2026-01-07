@@ -14,7 +14,7 @@ const TermsOfService = () => {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    document.title = "Terms of Service | lms";
+    document.title = "Terms of Service | LMS";
     setIsClient(true);
   }, []);
 
@@ -36,7 +36,7 @@ const TermsOfService = () => {
         </i>
       </p>
       <p className="text-md text-gray-800 dark:text-neutral-300">
-        Welcome to the unofficial read-only dashboard "lms" ("we", "our",
+        Welcome to the unofficial read-only dashboard "LMS" ("we", "our",
         "us"). By accessing or using this site, you agree to the following Terms
         of Service ("Terms"). If you do not agree to these Terms, you must not
         access or use the platform.
