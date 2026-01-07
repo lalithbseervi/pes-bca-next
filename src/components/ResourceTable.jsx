@@ -23,7 +23,9 @@ export default function ResourceTable({ semesterId, subjectId, resourceType }) {
     const fetchUnits = async () => {
       setLoadingUnits(true);
       try {
-        const { data } = await axiosClient.get(`/api/units?subject_id=${subjectId}`);
+        const { data } = await axiosClient.get(
+          `/api/units?subject_id=${subjectId}`
+        );
         setUnits(data);
         // default to unit 1
         if (data.length > 0) {
@@ -59,42 +61,50 @@ export default function ResourceTable({ semesterId, subjectId, resourceType }) {
 
     const fetchResources = async () => {
       const resourceCacheKey = `res_${activeUnitId}`;
-      
+
       // Safely access localStorage (may not exist in SSR or be blocked)
       let cachedResources = null;
       let cachedETag = null;
       let cachedFilterETag = null;
-      
-      if (typeof window !== 'undefined' && window.localStorage) {
+
+      if (typeof window !== "undefined" && window.localStorage) {
         try {
           cachedResources = localStorage.getItem(resourceCacheKey);
           cachedETag = localStorage.getItem(`etag_${activeUnitId}`);
         } catch (e) {
-          console.warn('localStorage access failed:', e);
-        }
-      }
-      
-      // Generate filter-specific ETag key
-      const filterETagKey = resourceType ? `etag_${activeUnitId}_${resourceType}` : null;
-      if (filterETagKey && typeof window !== 'undefined' && window.localStorage) {
-        try {
-          cachedFilterETag = localStorage.getItem(filterETagKey);
-        } catch (e) {
-          console.warn('localStorage access failed:', e);
+          console.warn("localStorage access failed:", e);
         }
       }
 
-      const url = `/api/resources?subject_id=${subjectId}&unit_id=${activeUnitId}${resourceType ? `&resource_type=${resourceType}` : ''}`;
+      // Generate filter-specific ETag key
+      const filterETagKey = resourceType
+        ? `etag_${activeUnitId}_${resourceType}`
+        : null;
+      if (
+        filterETagKey &&
+        typeof window !== "undefined" &&
+        window.localStorage
+      ) {
+        try {
+          cachedFilterETag = localStorage.getItem(filterETagKey);
+        } catch (e) {
+          console.warn("localStorage access failed:", e);
+        }
+      }
+
+      const url = `/api/resources?subject_id=${subjectId}&unit_id=${activeUnitId}${
+        resourceType ? `&resource_type=${resourceType}` : ""
+      }`;
 
       // If cache exists and resourceType filter is applied, show filtered data immediately
       if (cachedResources && resourceType) {
         console.log("Using cached data with filter");
         let resources = JSON.parse(cachedResources);
         resources = resources.filter((r) => r.resource_type === resourceType);
-        
+
         // Generate ETag for filtered results
         const filteredETag = generateETag(JSON.stringify(resources));
-        
+
         setResources(resources);
         setLoadingResources(false);
 
@@ -104,7 +114,8 @@ export default function ResourceTable({ semesterId, subjectId, resourceType }) {
             headers: {
               "If-None-Match": cachedFilterETag || filteredETag,
             },
-            validateStatus: (status) => (status >= 200 && status < 300) || status === 304,
+            validateStatus: (status) =>
+              (status >= 200 && status < 300) || status === 304,
           })
           .then((res) => {
             if (res.status === 304) {
@@ -120,21 +131,26 @@ export default function ResourceTable({ semesterId, subjectId, resourceType }) {
               let cachedAll = JSON.parse(cachedResources);
 
               // Remove old resources of this type
-              cachedAll = cachedAll.filter((r) => r.resource_type !== resourceType);
+              cachedAll = cachedAll.filter(
+                (r) => r.resource_type !== resourceType
+              );
 
-                // Add new resources of this type to the existing data
-                cachedAll = [...cachedAll, ...newData];
+              // Add new resources of this type to the existing data
+              cachedAll = [...cachedAll, ...newData];
 
-                // Update localStorage with merged data
-                try {
-                  localStorage.setItem(resourceCacheKey, JSON.stringify(cachedAll));
-                  localStorage.setItem(filterETagKey, newETag);
-                } catch (e) {
-                  console.warn('localStorage write failed:', e);
-                }
+              // Update localStorage with merged data
+              try {
+                localStorage.setItem(
+                  resourceCacheKey,
+                  JSON.stringify(cachedAll)
+                );
+                localStorage.setItem(filterETagKey, newETag);
+              } catch (e) {
+                console.warn("localStorage write failed:", e);
+              }
 
-                // Update displayed resources with new filtered data
-                setResources(newData);
+              // Update displayed resources with new filtered data
+              setResources(newData);
             }
           })
           .catch((err) => {
@@ -152,14 +168,17 @@ export default function ResourceTable({ semesterId, subjectId, resourceType }) {
           headers: {
             "If-None-Match": cachedETag || "",
           },
-          validateStatus: (status) => (status >= 200 && status < 300) || status === 304,
+          validateStatus: (status) =>
+            (status >= 200 && status < 300) || status === 304,
         });
 
         if (res.status === 304) {
           console.log("No changes in resources.");
           let resources = JSON.parse(cachedResources);
           if (resourceType) {
-            resources = resources.filter((r) => r.resource_type === resourceType);
+            resources = resources.filter(
+              (r) => r.resource_type === resourceType
+            );
           }
           setResources(resources);
           setLoadingResources(false);
@@ -169,28 +188,34 @@ export default function ResourceTable({ semesterId, subjectId, resourceType }) {
         if (res.status === 200) {
           const data = res.data;
           const newETag = res.headers["etag"];
-try {
+          try {
             localStorage.setItem(resourceCacheKey, JSON.stringify(data));
             localStorage.setItem(`etag_${activeUnitId}`, newETag);
 
             // If filtering, generate and store filter-specific ETag
             if (resourceType && filterETagKey) {
-              const displayResources = data.filter((r) => r.resource_type === resourceType);
-              const filteredETag = generateETag(JSON.stringify(displayResources));
+              const displayResources = data.filter(
+                (r) => r.resource_type === resourceType
+              );
+              const filteredETag = generateETag(
+                JSON.stringify(displayResources)
+              );
               localStorage.setItem(filterETagKey, filteredETag);
             }
           } catch (e) {
-            console.warn('localStorage write failed:', e);
+            console.warn("localStorage write failed:", e);
           }
 
           // If filtering, generate and store filter-specific ETag
           let displayResources = data;
           if (resourceType) {
-            displayResources = data.filter((r) => r.resource_type === resourceType);
+            displayResources = data.filter(
+              (r) => r.resource_type === resourceType
+            );
             const filteredETag = generateETag(JSON.stringify(displayResources));
             localStorage.setItem(filterETagKey, filteredETag);
           }
-          
+
           setResources(displayResources);
           setLoadingResources(false);
         }

@@ -65,7 +65,7 @@ export async function GET(req) {
     return new Response(null, {
       status: 304,
       headers: {
-        ETag: etag,
+        'ETag': etag,
       },
     });
   }
@@ -97,7 +97,7 @@ export async function GET(req) {
 
   return new Response(JSON.stringify(flattenedData), {
     status: 200,
-    headers: { ETag: etag, "Cache-Control": "private, max-age=86400" },
+    headers: { 'ETag': etag, "Cache-Control": "private, max-age=86400" },
   });
   // return new Response(JSON.stringify(data), { status: 200, headers: { 'ETag': etag, 'Cache-Control': 'private, max-age=86400' } });
 }
