@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useSession } from "@/components/ClientLayout";
 import axiosClient from "@/lib/axios_client";
+import Select from "@/components/Select";
 
 export default function ResourceUploadPage() {
   const { session } = useSession();
@@ -17,6 +18,10 @@ export default function ResourceUploadPage() {
 
   const [resourceType, setResourceType] = useState("");
   const [uploading, setUploading] = useState(false);
+
+  const [loadingSemesters, setLoadingSemesters] = useState(false);
+  const [loadingSubjects, setLoadingSubjects] = useState(false);
+  const [loadingUnits, setLoadingUnits] = useState(false);
 
   // pre-submit staging state
   const [pendingResources, setPendingResources] = useState([]);
@@ -34,6 +39,7 @@ export default function ResourceUploadPage() {
     const fetchSemesters = async () => {
       if (!session?.course_id) return;
 
+      setLoadingSemesters(true);
       try {
         const { data } = await axiosClient.get(
           `/api/semesters?course_id=${session.course_id}`,
@@ -48,6 +54,8 @@ export default function ResourceUploadPage() {
         } else {
           console.error("Error fetching semesters:", error);
         }
+      } finally {
+        setLoadingSemesters(false);
       }
     };
 
@@ -69,6 +77,7 @@ export default function ResourceUploadPage() {
     const abortController = new AbortController();
 
     const fetchSubjects = async () => {
+      setLoadingSubjects(true);
       try {
         const selectedSemester = semesters.find(
           (s) => String(s.semester_number) === String(semID)
@@ -91,6 +100,8 @@ export default function ResourceUploadPage() {
         } else {
           console.error("Error fetching subjects:", error);
         }
+      } finally {
+        setLoadingSubjects(false);
       }
     };
 
@@ -107,11 +118,14 @@ export default function ResourceUploadPage() {
     }
 
     (async () => {
+      setLoadingUnits(true);
       try {
         const { data } = await axiosClient.get(`/api/units?subject_id=${subjectId}`);
         setUnits(data);
       } catch (error) {
         console.error("Error fetching units:", error);
+      } finally {
+        setLoadingUnits(false);
       }
     })();
   }, [subjectId]);
@@ -207,24 +221,20 @@ export default function ResourceUploadPage() {
       <h1 className="text-2xl font-bold">Upload Resource</h1>
 
       {/* Semesters */}
-      <select
+      <Select
         value={semID}
-        onChange={(e) => {
-          setSemID(e.target.value);
-        }}
-        className="border p-2 w-full"
-      >
-        <option value="">Select semesters</option>
-        {semesters &&
-          semesters.map((s) => (
-            <option key={s.id} value={s.semester_number}>
-              {s.title}
-            </option>
-          ))}
-      </select>
+        onChange={(e) => setSemID(e.target.value)}
+        loading={loadingSemesters}
+        placeholder="Select semester"
+        options={semesters.map((s) => ({
+          key: s.id,
+          value: s.semester_number,
+          label: s.title,
+        }))}
+      />
 
       {/* Subject */}
-      <select
+      <Select
         value={subjectId}
         onChange={(e) => {
           const id = e.target.value;
@@ -232,49 +242,47 @@ export default function ResourceUploadPage() {
           const subj = subjects.find((s) => String(s.id) === String(id));
           setsubjectName(subj?.name || "");
         }}
-        className="border p-2 w-full"
-      >
-        <option value="">Select subject</option>
-        {subjects &&
-          subjects.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.name}
-            </option>
-          ))}
-      </select>
+        loading={loadingSubjects}
+        disabled={!semID}
+        placeholder="Select subject"
+        options={subjects.map((s) => ({
+          key: s.id,
+          value: s.id,
+          label: s.name,
+        }))}
+      />
 
       {/* Unit */}
-      <select
+      <Select
         value={unitId}
         onChange={(e) => setUnitId(e.target.value)}
-        className="border p-2 w-full disabled:cursor-not-allowed hover:cursor-pointer"
+        loading={loadingUnits}
         disabled={!subjectId}
-      >
-        <option value="">Select unit</option>
-        {units.map((u) => (
-          <option key={u.id} value={u.id}>
-            Unit {u.unit_number} – {u.title}
-          </option>
-        ))}
-      </select>
+        placeholder="Select unit"
+        options={units.map((u) => ({
+          key: u.id,
+          value: u.id,
+          label: `Unit ${u.unit_number} – ${u.title}`,
+        }))}
+      />
 
       {/* Resource type */}
-      <select
+      <Select
         value={resourceType}
         onChange={(e) => setResourceType(e.target.value)}
-        className="border p-2 w-full disabled:cursor-not-allowed hover:cursor-pointer"
         disabled={!unitId}
-      >
-        <option value="">Select resource type</option>
-        <option value="slides">Slides</option>
-        <option value="QA">Question Answers</option>
-        <option value="QB">Question Bank</option>
-        <option value="notes">Notes</option>
-        <option value="assignment">Assignment</option>
-        <option value="textbook">Textbook</option>
-        <option value="PYQ">Previous Year Questions</option>
-        <option value="misc">Miscellaneous</option>
-      </select>
+        placeholder="Select resource type"
+        options={[
+          { value: "slides", label: "Slides" },
+          { value: "QA", label: "Question Answers" },
+          { value: "QB", label: "Question Bank" },
+          { value: "notes", label: "Notes" },
+          { value: "assignment", label: "Assignment" },
+          { value: "textbook", label: "Textbook" },
+          { value: "PYQ", label: "Previous Year Questions" },
+          { value: "misc", label: "Miscellaneous" },
+        ]}
+      />
 
       {/* File input */}
       <input

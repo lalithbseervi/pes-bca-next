@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { useSession } from "@/components/ClientLayout";
 import axiosClient from "@/lib/axios_client";
+import Select from "@/components/Select";
 
 const ResourceTable = dynamic(() => import("@/components/ResourceTable"), {
   ssr: false,
@@ -90,62 +91,59 @@ export default function Dashboard() {
         {/* Semester Select */}
         <div className="flex-1 min-w-0 lg:max-w-[10vw]">
           <label className="block font-semibold mb-1 text-sm md:text-base">Semester</label>
-          <select
+          <Select
             value={selectedSemesterId}
             onChange={(e) => {
               setSelectedSemesterId(e.target.value);
               setSelectedSubjectId("");
             }}
-            className="border p-2 rounded w-full lg:max-w-max text-sm md:text-base"
-          >
-            <option value="">Select semester</option>
-            {semesters.map((sem) => (
-              <option key={sem.id} value={sem.id}>
-                {sem.title}
-              </option>
-            ))}
-          </select>
+            placeholder="Select semester"
+            options={semesters.map((sem) => ({
+              key: sem.id,
+              value: sem.id,
+              label: sem.title,
+            }))}
+            className="lg:max-w-max text-sm md:text-base"
+          />
         </div>
 
         {/* Subject Select */}
         <div className="flex-1 min-w-0">
           <label className="block font-semibold mb-1 text-sm md:text-base">Subject</label>
-          <select
+          <Select
             value={selectedSubjectId}
             onChange={(e) => setSelectedSubjectId(e.target.value)}
-            className="border p-2 rounded w-full lg:flex-1 text-sm md:text-base disabled:cursor-not-allowed"
             disabled={!selectedSemesterId}
-          >
-            <option value="">Select subject</option>
-            {subjects.map((sub) => (
-              <option key={sub.id} value={sub.id}>
-                {sub.name}
-              </option>
-            ))}
-          </select>
+            placeholder="Select subject"
+            options={subjects.map((sub) => ({
+              key: sub.id,
+              value: sub.id,
+              label: sub.name,
+            }))}
+            className="lg:flex-1 text-sm md:text-base"
+          />
         </div>
 
         {/* Select Resource Type */}
         <div className="flex-1 min-w-0">
           <label className="block font-semibold mb-1 text-sm md:text-base">Resource Type</label>
-          <select
+          <Select
             value={selectedResourceType}
             onChange={(e) => setSelectedResourceType(e.target.value)}
-            className="border p-2 rounded w-full lg:max-w-max text-sm md:text-base disabled:cursor-not-allowed"
             disabled={!selectedSubjectId}
-          >
-            <option value="" key="">
-              All (Slides, QA, etc.)
-            </option>
-            <option value="slides">Slides</option>
-            <option value="QA">Question Answers</option>
-            <option value="QB">Question Bank</option>
-            <option value="notes">Notes</option>
-            <option value="assignment">Assignment</option>
-            <option value="textbook">Textbook</option>
-            <option value="PYQ">Previous Year Questions</option>
-            <option value="misc">Miscellaneous</option>
-          </select>
+            placeholder="All (Slides, QA, etc.)"
+            options={[
+              { value: "slides", label: "Slides" },
+              { value: "QA", label: "Question Answers" },
+              { value: "QB", label: "Question Bank" },
+              { value: "notes", label: "Notes" },
+              { value: "assignment", label: "Assignment" },
+              { value: "textbook", label: "Textbook" },
+              { value: "PYQ", label: "Previous Year Questions" },
+              { value: "misc", label: "Miscellaneous" },
+            ]}
+            className="lg:max-w-max text-sm md:text-base"
+          />
         </div>
       </div>
       <Suspense
