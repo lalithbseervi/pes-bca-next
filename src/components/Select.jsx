@@ -19,7 +19,7 @@ export default function Select({
     bg-white dark:bg-[#1a1a1a] 
     text-gray-900 dark:text-gray-100 
     border-gray-300 dark:border-gray-600
-    focus:outline-none focus:ring-2 focus:ring-[#21c063] focus:border-[#21c063]
+    focus:outline-none focus:ring focus:ring-[#21c063] focus:border-[#21c063]
     disabled:bg-gray-100 dark:disabled:bg-[#0f0f0f] 
     disabled:text-gray-400 dark:disabled:text-gray-300 
     disabled:cursor-not-allowed

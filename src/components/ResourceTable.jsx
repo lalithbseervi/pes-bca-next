@@ -240,7 +240,7 @@ export default function ResourceTable({ semesterId, subjectId, resourceType }) {
   };
 
   return (
-    <div className="mt-6">
+    <div className="mt-14">
       {/* Unit Tabs */}
       <div className="flex border-b mb-4 overflow-x-auto">
         {loadingUnits && (
