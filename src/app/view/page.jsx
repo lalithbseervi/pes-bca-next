@@ -194,7 +194,7 @@ export default function ViewResourcePage() {
       </div>
 
       {/* PDF Viewer (native browser toolbar) */}
-      <div className="flex-1 mt-2 md:mt-0 mx-4 mb-4 bg-gray-100">
+      <div className="flex-1 mt-2 md:mt-0 mx-4 mb-4 bg-gray-50 dark:bg-gray-900">
         <iframe src={pdfUrl} className="w-full h-full" title="PDF Viewer" />
       </div>
 
@@ -211,7 +211,7 @@ export default function ViewResourcePage() {
               <span className={isMobile ? "ml-2" : "ml-0"}>{navigation.prev.link_text}</span>
             </Link>
           ) : (
-            <span className="text-gray-400 flex items-center md:gap-2">
+            <span className="text-gray-400 dark:text-gray-500 flex items-center md:gap-2">
               {isMobile ? mobile_prev_nav_svg : prev_nav_svg}
               <span className={isMobile ? "ml-2" : "ml-0"}>No previous resource</span>
             </span>
@@ -229,7 +229,7 @@ export default function ViewResourcePage() {
               {isMobile ? mobile_next_nav_svg : next_nav_svg}
             </Link>
           ) : (
-            <span className="text-gray-400 flex items-center justify-end md:gap-2">
+            <span className="text-gray-400 dark:text-gray-500 flex items-center justify-end md:gap-2">
               <span>No next resource</span>
               {isMobile ? mobile_next_nav_svg : next_nav_svg}
             </span>

@@ -22,24 +22,28 @@ export default function AnalyticsConsentBanner({ user, onChoice, forceVisible = 
   if (!visible) return null;
 
   return (
-    <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, background: '#222', color: '#fff', padding: 16, zIndex: 1000, textAlign: 'center' }}>
-      <span style={{ marginRight: 16 }}>
-        We use analytics to improve your experience. Do you want to help us by sharing usage data?
-      </span>
-      <button
-        onClick={() => handleChoice(true)}
-        style={{ marginRight: 8, background: '#176f3f', color: '#fff', border: 'none', padding: '8px 12px', borderRadius: 6 }}
-        className='hover:cursor-pointer'
-      >
-        Accept
-      </button>
-      <button
-        onClick={() => handleChoice(false)}
-        style={{ background: '#444', color: '#fff', border: 'none', padding: '8px 12px', borderRadius: 6 }}
-        className='hover:cursor-pointer'
-      >
-        Deny
-      </button>
+    <div className="fixed inset-x-0 bottom-0 z-[1000] bg-neutral-900 text-white px-4 py-3">
+      <div className="mx-auto max-w-3xl">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-center gap-3 text-center">
+          <p className="text-sm md:text-base md:mr-4">
+            We use analytics to improve your experience. Do you want to help us by sharing usage data?
+          </p>
+          <div className="flex w-full md:w-auto items-center justify-center gap-2">
+            <button
+              onClick={() => handleChoice(true)}
+              className="hover:cursor-pointer rounded-md bg-emerald-700 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-600 transition-colors"
+            >
+              Accept
+            </button>
+            <button
+              onClick={() => handleChoice(false)}
+              className="hover:cursor-pointer rounded-md bg-neutral-700 px-3 py-2 text-sm font-medium text-white hover:bg-neutral-600 transition-colors"
+            >
+              Deny
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

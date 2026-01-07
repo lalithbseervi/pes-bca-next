@@ -96,42 +96,42 @@ export default function AuthenticatePage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-neutral-900">
-      <div className="flex flex-col w-full max-w-2xl mx-4 gap-4 rounded-md bg-neutral-950 border border-neutral-800 shadow-xl">
-        <header className="text-2xl p-4 bg-neutral-800 rounded-t-md">Student Login</header>
+    <div className="flex min-h-screen items-center justify-center bg-gray-100 dark:bg-neutral-900">
+      <div className="flex flex-col w-full max-w-2xl mx-4 gap-4 rounded-md bg-white dark:bg-neutral-950 border border-gray-300 dark:border-neutral-800 shadow-xl">
+        <header className="text-2xl p-4 bg-gray-200 dark:bg-neutral-800 rounded-t-md text-gray-900 dark:text-gray-100">Student Login</header>
 
         {loading ? (
           <div className="flex flex-col items-center justify-center gap-4 py-12 px-8">
             <div className="flex items-center justify-center">
               <div className="w-16 h-16 border-4 border-emerald-600 border-t-emerald-300 rounded-full animate-spin"></div>
             </div>
-            <p className="text-lg text-emerald-400">Authenticating...</p>
-            <p className="text-md">This might take a while (upto 2 mins)</p>
+            <p className="text-lg text-emerald-600 dark:text-emerald-400">Authenticating...</p>
+            <p className="text-md text-gray-700 dark:text-gray-300">This might take a while (upto 2 mins)</p>
           </div>
         ) : (
           <div className="flex flex-col gap-3 px-8 pb-8 pt-4">
-            <label className="text-lg">SRN / PRN / Email:</label>
+            <label className="text-lg text-gray-900 dark:text-gray-100">SRN / PRN / Email:</label>
             <input
               type="text"
               name="username"
               id="username"
               value={username}
               onChange={handleUsernameChange}
-              className="p-3 rounded-md bg-[#2a2a2a] has-focus:border-emerald-600 autofill:shadow-[inset_0_0_0px_1000px_rgb(128,128,128)] mb-2 w-full"
+              className="p-3 rounded-md bg-white dark:bg-[#2a2a2a] text-gray-900 dark:text-white border border-gray-300 dark:border-gray-700 focus:border-emerald-600 focus:outline-none autofill:shadow-[inset_0_0_0px_1000px_rgb(255,255,255)] dark:autofill:shadow-[inset_0_0_0px_1000px_rgb(42,42,42)] mb-2 w-full"
             />
-            <label className="text-lg">Password (PESU Academy password)</label>
+            <label className="text-lg text-gray-900 dark:text-gray-100">Password (PESU Academy password)</label>
             <input
               type="password"
               name="password"
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="p-3 rounded-md bg-[#2a2a2a] has-focus:border-emerald-600 autofill:shadow-[inset_0_0_0px_1000px_rgb(128,128,128)] w-full"
+              className="p-3 rounded-md bg-white dark:bg-[#2a2a2a] text-gray-900 dark:text-white border border-gray-300 dark:border-gray-700 focus:border-emerald-600 focus:outline-none autofill:shadow-[inset_0_0_0px_1000px_rgb(255,255,255)] dark:autofill:shadow-[inset_0_0_0px_1000px_rgb(42,42,42)] w-full"
             />
             <button
               type="submit"
               onClick={login}
-              className="text-lg bg-emerald-900 w-full py-3 mt-4 rounded-md hover:cursor-pointer disabled:cursor-not-allowed"
+              className="text-lg bg-emerald-700 dark:bg-emerald-900 hover:bg-emerald-600 dark:hover:bg-emerald-800 text-white w-full py-3 mt-4 rounded-md hover:cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 transition-colors"
               disabled={loading ? true : false}
             >
               Login
@@ -143,12 +143,12 @@ export default function AuthenticatePage() {
       {/* Error Modal */}
       {error && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-neutral-900 border border-red-500 rounded-lg p-6 max-w-md mx-4 shadow-2xl">
-            <h3 className="text-xl font-bold text-red-500 mb-4">Authentication Error</h3>
-            <p className="text-neutral-200 mb-6 whitespace-pre-wrap">{error}</p>
+          <div className="bg-white dark:bg-neutral-900 border border-red-500 dark:border-red-600 rounded-lg p-6 max-w-md mx-4 shadow-2xl">
+            <h3 className="text-xl font-bold text-red-600 dark:text-red-500 mb-4">Authentication Error</h3>
+            <p className="text-gray-800 dark:text-neutral-200 mb-6 whitespace-pre-wrap">{error}</p>
             <button
               onClick={() => setError(null)}
-              className="w-full bg-red-900 hover:bg-red-800 text-white py-2 rounded-md transition-colors"
+              className="w-full bg-red-600 dark:bg-red-900 hover:bg-red-700 dark:hover:bg-red-800 text-white py-2 rounded-md transition-colors"
             >
               Close
             </button>

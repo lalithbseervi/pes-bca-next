@@ -27,13 +27,13 @@ export default function InstallPWAModal({ visible, onClose, onInstall }) {
 
         <div className="flex flex-col-reverse gap-3 md:flex-row md:justify-end">
           <button
-            className="rounded border border-neutral-700 px-4 py-2 text-sm hover:bg-neutral-800 transition-colors"
+            className="rounded border border-gray-300 dark:border-neutral-700 px-4 py-2 text-sm bg-white dark:bg-neutral-800 text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-neutral-700 transition-colors"
             onClick={onClose}
           >
             Maybe Later
           </button>
           <button
-            className="rounded bg-emerald-700 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600 transition-colors"
+            className="rounded bg-emerald-600 dark:bg-emerald-700 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 dark:hover:bg-emerald-600 transition-colors"
             onClick={onInstall}
           >
             Install App

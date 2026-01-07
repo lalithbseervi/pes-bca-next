@@ -111,18 +111,18 @@ export default function ProfileCompletionModal() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4">
-      <div className="w-full max-w-lg rounded-lg border border-neutral-700 bg-neutral-900 shadow-2xl p-6 space-y-4">
+      <div className="w-full max-w-lg rounded-lg border border-gray-300 dark:border-neutral-700 bg-gray-50 dark:bg-neutral-900 shadow-2xl p-6 space-y-4">
         <header className="space-y-1">
-          <h2 className="text-xl font-bold">Complete Your Profile</h2>
-          <p className="text-sm text-neutral-300">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Complete Your Profile</h2>
+          <p className="text-sm text-gray-700 dark:text-neutral-300">
             We could not fetch all details automatically. Please fill the missing fields to continue.
           </p>
         </header>
 
         <div className="space-y-3">
-          <label className="block text-sm font-semibold">Program / Course</label>
+          <label className="block text-sm font-semibold text-gray-900 dark:text-gray-100">Program / Course</label>
           <select
-            className="w-full rounded border border-neutral-700 bg-neutral-800 p-3 text-sm hover:cursor-pointer"
+            className="w-full rounded border border-gray-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-gray-900 dark:text-gray-100 p-3 text-sm hover:cursor-pointer"
             value={selectedCourseId || ""}
             onChange={(e) => setSelectedCourseId(e.target.value)}
           >
@@ -136,9 +136,9 @@ export default function ProfileCompletionModal() {
         </div>
 
         <div className="space-y-3">
-          <label className="block text-sm font-semibold">Current Semester</label>
+          <label className="block text-sm font-semibold text-gray-900 dark:text-gray-100">Current Semester</label>
           <select
-            className="w-full rounded border border-neutral-700 bg-neutral-800 p-3 text-sm hover:cursor-pointer"
+            className="w-full rounded border border-gray-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-gray-900 dark:text-gray-100 p-3 text-sm hover:cursor-pointer"
             value={selectedSemester}
             onChange={(e) => setSelectedSemester(e.target.value)}
           >
@@ -152,14 +152,14 @@ export default function ProfileCompletionModal() {
         </div>
 
         {error && (
-          <div className="rounded border border-red-500 bg-red-900/30 p-3 text-sm text-red-200">
+          <div className="rounded border border-red-500 dark:border-red-600 bg-red-50 dark:bg-red-900/30 p-3 text-sm text-red-800 dark:text-red-200">
             {error}
           </div>
         )}
 
         <div className="flex flex-col gap-2 md:flex-row md:justify-start md:gap-3">
           <button
-            className="rounded bg-emerald-700 px-4 py-2 text-sm font-semibold text-white disabled:opacity-60 hover:cursor-pointer"
+            className="rounded bg-emerald-600 dark:bg-emerald-700 px-4 py-2 text-sm font-semibold text-white disabled:opacity-60 hover:cursor-pointer hover:bg-emerald-700 dark:hover:bg-emerald-600 transition-colors"
             onClick={handleSave}
             disabled={loading || !selectedCourseId || !selectedSemester}
           >

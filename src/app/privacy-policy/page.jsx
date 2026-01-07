@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 
 const Section = ({ title, children }) => (
   <div className="mb-8">
-    <h2 className="text-2xl font-semibold mt-6 mb-4">{title}</h2>
-    <div className="text-md text-neutral-300">{children}</div>
+    <h2 className="text-2xl font-semibold mt-6 mb-4 text-gray-900 dark:text-gray-100">{title}</h2>
+    <div className="text-md text-gray-800 dark:text-neutral-300">{children}</div>
   </div>
 );
 
@@ -23,12 +23,12 @@ const PrivacyPolicy = () => {
 
   return (
     <div className="max-w-3xl mx-auto mt-10 md:mt-0 md:pt-0 p-4">
-      <h1 className="text-3xl font-semibold text-center mb-6">
+      <h1 className="text-3xl font-semibold text-center mb-6 text-gray-900 dark:text-gray-100">
         Privacy and Cookie Policy
       </h1>
-      <p className="text-base text-center mb-8">Last Updated: 29-11-25</p>
+      <p className="text-base text-center mb-8 text-gray-600 dark:text-gray-300">Last Updated: 29-11-25</p>
 
-      <p className="text-lg mb-6">
+      <p className="text-lg mb-6 text-gray-800 dark:text-neutral-300">
         Below is a detailed outline of how and what data is collected, used, and stored as you use this site.
       </p>
 

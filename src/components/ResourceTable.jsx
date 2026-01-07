@@ -223,7 +223,7 @@ try {
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="h-8 w-20 md:w-28 rounded-xl bg-gray-300 animate-pulse transform hover:scale-102 transition-all duration-300"
+                className="h-8 w-20 md:w-28 rounded-xl bg-gray-300 dark:bg-gray-600 animate-pulse transform hover:scale-102 transition-all duration-300"
                 aria-label="Loading units"
               />
             ))}
@@ -236,8 +236,8 @@ try {
               onClick={() => setActiveUnitId(unit.id)}
               className={`px-2 md:px-4 py-2 border-b-2 hover:cursor-pointer whitespace-nowrap text-sm md:text-base ${
                 activeUnitId === unit.id
-                  ? "border-blue-500 font-semibold"
-                  : "border-transparent text-gray-500"
+                  ? "border-blue-500 font-semibold text-gray-900 dark:text-gray-100"
+                  : "border-transparent text-gray-500 dark:text-gray-400"
               }`}
             >
               {unit.title}
@@ -249,11 +249,11 @@ try {
       <div className="overflow-x-auto max-w-full lg:max-w-10/12">
         {loadingResources ? (
           <div className="space-y-3" aria-label="Loading resources">
-            <div className="h-[25vh] sm:h-[22vh] md:h-[20vh] lg:h-[32vh] w-full lg:max-w-11/12 xl:max-w-10/12 bg-gray-200 animate-pulse rounded-md duration-300" />
+            <div className="h-[25vh] sm:h-[22vh] md:h-[20vh] lg:h-[32vh] w-full lg:max-w-11/12 xl:max-w-10/12 bg-gray-200 dark:bg-gray-700 animate-pulse rounded-md duration-300" />
           </div>
         ) : (
           <table className="w-full lg:max-w-11/12 xl:max-w-10/12 border text-xs md:text-sm mb-4">
-            <thead className="bg-gray-100 text-black">
+            <thead className="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100">
               <tr>
                 <th className="border py-1 px-2 md:p-2 text-left w-[15%]">
                   Type
@@ -272,7 +272,7 @@ try {
                 <tr>
                   <td
                     colSpan={3}
-                    className="py-2 px-4 md:p-4 text-xl text-center text-neutral-300"
+                    className="py-2 px-4 md:p-4 text-xl text-center text-gray-500 dark:text-neutral-400"
                   >
                     Select Semester
                   </td>
@@ -281,7 +281,7 @@ try {
                 <tr>
                   <td
                     colSpan={3}
-                    className="py-2 px-4 md:p-4 text-xl text-center text-neutral-300"
+                    className="py-2 px-4 md:p-4 text-xl text-center text-gray-500 dark:text-neutral-400"
                   >
                     Select Subject
                   </td>
@@ -293,7 +293,7 @@ try {
                 <tr>
                   <td
                     colSpan="3"
-                    className="py-2 px-4 md:p-4 text-center text-gray-500"
+                    className="py-2 px-4 md:p-4 text-center text-gray-500 dark:text-gray-400"
                   >
                     No resources available.
                   </td>

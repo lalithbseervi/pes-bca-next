@@ -34,7 +34,7 @@ export default function Nav() {
     if (href == "/") baseClass += " mt-4"
     const activeClass = isActive(href)
       ? "border-2 border-[#21c063] bg-[#21c063] text-black hover:text-black"
-      : "text-white";
+      : "text-gray-900 dark:text-white";
     return `${baseClass} ${activeClass}`;
   };
 
@@ -145,7 +145,7 @@ export default function Nav() {
       {mounted && (
         <button
           aria-label="Toggle menu"
-          className="md:hidden hover:cursor-pointer fixed top-4 right-4 z-[60] p-2 text-white"
+          className="md:hidden hover:cursor-pointer fixed top-4 right-4 z-[60] p-2 text-gray-900 dark:text-white"
           onClick={toggleMenu}
         >
           {menuOpen ? (
@@ -183,7 +183,7 @@ export default function Nav() {
 
       {/* Mobile/Tablet Overlay Menu */}
       {menuOpen && (
-        <div className="md:hidden fixed inset-0 bg-black bg-opacity-95 z-50 flex flex-col p-8 pt-20">
+        <div className="md:hidden fixed inset-0 bg-white dark:bg-black bg-opacity-95 dark:bg-opacity-95 z-50 flex flex-col p-8 pt-20">
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -191,7 +191,7 @@ export default function Nav() {
               className={`flex gap-4 items-center p-4 text-lg ${
                 isActive(link.href)
                   ? "bg-[#21c063] text-black rounded-md"
-                  : "text-white"
+                  : "text-gray-900 dark:text-white"
               }`}
               onClick={() => setMenuOpen(false)}
             >
@@ -204,7 +204,7 @@ export default function Nav() {
 
           {/* Temporarily show always for testing */}
           <button
-            className="flex gap-4 items-center p-4 text-lg text-white"
+            className="flex gap-4 items-center p-4 text-lg text-gray-900 dark:text-white"
             onClick={handleInstallClick}
           >
             <div className="flex svg-container">
@@ -216,7 +216,7 @@ export default function Nav() {
           <Link
             id="privacy-settings-mobile"
             href="/privacy-settings"
-            className="flex gap-4 items-center p-4 text-lg text-white"
+            className="flex gap-4 items-center p-4 text-lg text-gray-900 dark:text-white"
             onClick={() => setMenuOpen(false)}
           >
             <div className="flex svg-container">
@@ -260,7 +260,7 @@ export default function Nav() {
 
             {/* Install App Button - Temporarily always shown for testing */}
             <button
-              className="flex justify-start items-center text-white flex-1 ml-2 mr-4 rounded-md hover:ring hover:shadow-[#21c063]/50 hover:text-[#21c063] hover:cursor-pointer"
+              className="flex justify-start items-center text-gray-900 dark:text-white flex-1 ml-2 mr-4 rounded-md hover:ring hover:shadow-[#21c063]/50 hover:text-[#21c063] hover:cursor-pointer"
               style={{ cursor: "pointer", maxHeight: "4vh" }}
               onClick={handleInstallClick}
             >
@@ -274,7 +274,7 @@ export default function Nav() {
             <Link
               id="privacy-settings-button"
               href="/privacy-settings"
-              className="flex justify-start items-center text-white flex-1 ml-2 mr-4 rounded-md hover:ring hover:shadow-[#21c063]/50 hover:text-[#21c063]"
+              className="flex justify-start items-center text-gray-900 dark:text-white flex-1 ml-2 mr-4 rounded-md hover:ring hover:shadow-[#21c063]/50 hover:text-[#21c063]"
               style={{ cursor: "pointer", maxHeight: "4vh" }}
             >
               <div className="flex svg-container p-2">

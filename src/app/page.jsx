@@ -86,11 +86,11 @@ export default function Dashboard() {
 
   return (
     <>
-      <h1 className="text-lg md:text-xl p-2 font-bold">Homepage | lms</h1>
+      <h1 className="text-lg md:text-xl p-2 font-bold text-gray-900 dark:text-gray-100">Homepage | lms</h1>
       <div className="p-2 flex flex-col md:flex-row gap-2 lg:flex-1/2 lg:gap-4 lg:max-w-4xl">
         {/* Semester Select */}
         <div className="flex-1 min-w-0 lg:max-w-[10vw]">
-          <label className="block font-semibold mb-1 text-sm md:text-base">Semester</label>
+          <label className="block font-semibold mb-1 text-sm md:text-base text-gray-900 dark:text-gray-100">Semester</label>
           <Select
             value={selectedSemesterId}
             onChange={(e) => {
@@ -109,7 +109,7 @@ export default function Dashboard() {
 
         {/* Subject Select */}
         <div className="flex-1 min-w-0">
-          <label className="block font-semibold mb-1 text-sm md:text-base">Subject</label>
+          <label className="block font-semibold mb-1 text-sm md:text-base text-gray-900 dark:text-gray-100">Subject</label>
           <Select
             value={selectedSubjectId}
             onChange={(e) => setSelectedSubjectId(e.target.value)}
@@ -126,7 +126,7 @@ export default function Dashboard() {
 
         {/* Select Resource Type */}
         <div className="flex-1 min-w-0">
-          <label className="block font-semibold mb-1 text-sm md:text-base">Resource Type</label>
+          <label className="block font-semibold mb-1 text-sm md:text-base text-gray-900 dark:text-gray-100">Resource Type</label>
           <Select
             value={selectedResourceType}
             onChange={(e) => setSelectedResourceType(e.target.value)}
@@ -149,10 +149,10 @@ export default function Dashboard() {
       <Suspense
         fallback={
           <div className="mt-6 space-y-3" aria-label="Loading resources">
-            <div className="h-10 w-64 bg-neutral-800/80 rounded animate-pulse" />
-            <div className="h-6 w-full bg-neutral-800/80 rounded animate-pulse" />
-            <div className="h-6 w-full bg-neutral-800/60 rounded animate-pulse" />
-            <div className="h-6 w-full bg-neutral-800/40 rounded animate-pulse" />
+            <div className="h-10 w-64 bg-gray-200 dark:bg-neutral-800/80 rounded animate-pulse" />
+            <div className="h-6 w-full bg-gray-200 dark:bg-neutral-800/80 rounded animate-pulse" />
+            <div className="h-6 w-full bg-gray-200 dark:bg-neutral-800/60 rounded animate-pulse" />
+            <div className="h-6 w-full bg-gray-200 dark:bg-neutral-800/40 rounded animate-pulse" />
           </div>
         }
       >

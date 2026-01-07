@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-900 text-white py-6 text-center text-sm md:text-base">
+    <footer className="bg-gray-800 dark:bg-gray-900 text-gray-100 dark:text-white py-6 text-center text-sm md:text-base">
       <p>
         Built with ❤️ using <a href="https://nextjs.org" target="_blank" rel="noopener noreferrer" className="underline hover:text-blue-400 transition-colors">Next.js</a>
       </p>

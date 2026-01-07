@@ -4,8 +4,8 @@ import Link from "next/link";
 
 const Section = ({ title, children }) => (
   <div className="mb-8">
-    <h2 className="text-2xl font-semibold mt-6 mb-4">{title}</h2>
-    <div className="text-md text-neutral-300">{children}</div>
+    <h2 className="text-2xl font-semibold mt-6 mb-4 text-gray-900 dark:text-gray-100">{title}</h2>
+    <div className="text-md text-gray-800 dark:text-neutral-300">{children}</div>
   </div>
 );
 
@@ -24,18 +24,18 @@ const TermsOfService = () => {
 
   return (
     <div className="max-w-3xl mx-auto p-4">
-      <h1 className="text-3xl font-semibold text-center mb-6">
+      <h1 className="text-3xl font-semibold text-center mb-6 text-gray-900 dark:text-gray-100">
         Terms of Service
       </h1>
-      <p className="text-base text-center mb-8">Last Updated: 29-11-2025</p>
+      <p className="text-base text-center mb-8 text-gray-600 dark:text-gray-300">Last Updated: 29-11-2025</p>
 
-      <p className="font-semibold text-md mb-6">
+      <p className="font-semibold text-md mb-6 text-gray-800 dark:text-neutral-200">
         <i>
           Note: By using this platform, you acknowledge that you have read,
           understood, and agree to be bound by these Terms of Service.
         </i>
       </p>
-      <p className="text-md">
+      <p className="text-md text-gray-800 dark:text-neutral-300">
         Welcome to the unofficial read-only dashboard "lms" ("we", "our",
         "us"). By accessing or using this site, you agree to the following Terms
         of Service ("Terms"). If you do not agree to these Terms, you must not
@@ -69,7 +69,7 @@ const TermsOfService = () => {
             </li>
             <li>
               Abide by all terms mentioned here and understand the{" "}
-              <Link href="/privacy-policy" className="text-blue-400 hover:text-blue-300 underline transition-colors">privacy policy</Link>.
+              <Link href="/privacy-policy" className="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 underline transition-colors">privacy policy</Link>.
             </li>
           </ul>
       </Section>
@@ -118,7 +118,7 @@ const TermsOfService = () => {
         <p>
           We are committed to protecting your privacy. Our collection and use of
           your personal data are governed by our{" "}
-          <Link href="/privacy-policy" className="text-blue-400 hover:text-blue-300 underline transition-colors">Privacy Policy</Link>. By using the platform,
+          <Link href="/privacy-policy" className="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 underline transition-colors">Privacy Policy</Link>. By using the platform,
           you consent to the collection and processing of your personal data as
           outlined in the Privacy Policy.
         </p>
@@ -143,7 +143,7 @@ const TermsOfService = () => {
             </li>
           </ul>
           You may check the status of the site in case of any errors at{" "}
-          <Link href="/status" className="text-blue-400 hover:text-blue-300 underline transition-colors">/status</Link>.
+          <Link href="/status" className="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 underline transition-colors">/status</Link>.
       </Section>
 
       {/* Changes to Terms of Service */}

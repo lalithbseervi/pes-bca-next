@@ -166,7 +166,7 @@ const Download = () => {
   return (
     <>
       <div className="p-8 max-w-xl space-y-6">
-        <h1 className="text-2xl font-bold">Download Resources</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Download Resources</h1>
 
         {/* Semesters */}
         <Select
@@ -236,22 +236,22 @@ const Download = () => {
           type="submit"
           onClick={handleDownloads}
           disabled={!semID || !subjectId || downloading}
-          className="mt-2 w-full rounded-md bg-blue-600 px-4 py-2 font-semibold text-white shadow-sm transition-colors duration-150 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-white disabled:cursor-not-allowed disabled:bg-gray-400 hover:cursor-pointer"
+          className="mt-2 w-full rounded-md bg-blue-600 dark:bg-blue-700 px-4 py-2 font-semibold text-white shadow-sm transition-colors duration-150 hover:bg-blue-500 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900 disabled:cursor-not-allowed disabled:bg-gray-400 dark:disabled:bg-gray-600 hover:cursor-pointer"
         >
           Download Files
         </button>
 
         {showNoResources && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
-            <div className="max-w-sm w-full rounded-lg bg-white p-6 shadow-xl">
-              <h2 className="text-lg font-semibold text-gray-900">No resources found</h2>
-              <p className="mt-2 text-sm text-gray-700">
+            <div className="max-w-sm w-full rounded-lg bg-white dark:bg-gray-800 p-6 shadow-xl border border-gray-200 dark:border-gray-700">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">No resources found</h2>
+              <p className="mt-2 text-sm text-gray-700 dark:text-gray-300">
                 There are no resources for the selected filters. Try another resource type or unit.
               </p>
               <div className="mt-4 flex justify-end gap-2">
                 <button
                   onClick={() => setShowNoResources(false)}
-                  className="rounded-md bg-gray-200 px-3 py-1.5 text-sm font-medium text-gray-800 hover:bg-gray-300"
+                  className="rounded-md bg-gray-200 dark:bg-gray-700 px-3 py-1.5 text-sm font-medium text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600"
                 >
                   Close
                 </button>
