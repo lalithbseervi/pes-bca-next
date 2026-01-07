@@ -138,7 +138,8 @@ export async function proxy(request) {
   requestHeaders.set("x-nonce", nonce);
 
   // Only set Content-Type to JSON for non-file routes
-  if (!request.nextUrl.pathname.includes("/api/download")) {
+  if (!request.nextUrl.pathname.includes("/api/download") && 
+      !request.nextUrl.pathname.includes("/api/upload")) {
     response.headers.set("Content-Type", "application/json");
   }
 
