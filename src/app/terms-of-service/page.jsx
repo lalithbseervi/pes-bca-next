@@ -69,7 +69,7 @@ const TermsOfService = () => {
             </li>
             <li>
               Abide by all terms mentioned here and understand the{" "}
-              <Link href="/privacy-policy" className="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 underline transition-colors">privacy policy</Link>.
+              <Link href="/privacy-policy" prefetch={false} className="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 underline transition-colors">privacy policy</Link>.
             </li>
           </ul>
       </Section>
@@ -118,7 +118,7 @@ const TermsOfService = () => {
         <p>
           We are committed to protecting your privacy. Our collection and use of
           your personal data are governed by our{" "}
-          <Link href="/privacy-policy" className="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 underline transition-colors">Privacy Policy</Link>. By using the platform,
+          <Link href="/privacy-policy" prefetch={false} className="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 underline transition-colors">Privacy Policy</Link>. By using the platform,
           you consent to the collection and processing of your personal data as
           outlined in the Privacy Policy.
         </p>
@@ -143,7 +143,7 @@ const TermsOfService = () => {
             </li>
           </ul>
           You may check the status of the site in case of any errors at{" "}
-          <Link href="/status" className="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 underline transition-colors">/status</Link>.
+          <Link href="/status" prefetch={false} className="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 underline transition-colors">/status</Link>.
       </Section>
 
       {/* Changes to Terms of Service */}

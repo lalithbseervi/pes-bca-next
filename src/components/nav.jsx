@@ -194,6 +194,7 @@ export default function Nav() {
                   : "text-gray-900 dark:text-white"
               }`}
               onClick={() => setMenuOpen(false)}
+              prefetch={false}
             >
               <div className="flex svg-container">
                 {renderIcon(link.icon)}
@@ -248,6 +249,7 @@ export default function Nav() {
                 key={link.href}
                 href={link.href}
                 className={getLinkClass(link.href)}
+                prefetch={false}
               >
                 <div className="flex svg-container p-2">
                   {renderIcon(link.icon)}
