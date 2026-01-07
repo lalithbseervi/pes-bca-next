@@ -66,6 +66,8 @@ export async function GET(req) {
       status: 304,
       headers: {
         'etag': etag,
+        'x-res-tag': etag,
+        'access-control-expose-headers': 'etag, x-res-tag',
       },
     });
   }
@@ -97,7 +99,12 @@ export async function GET(req) {
 
   return new Response(JSON.stringify(flattenedData), {
     status: 200,
-    headers: { 'etag': etag, "Cache-Control": "private, max-age=86400" },
+    headers: {
+      'etag': etag,
+      'x-res-tag': etag,
+      'Cache-Control': 'private, max-age=86400',
+      'access-control-expose-headers': 'etag, x-res-tag',
+    },
   });
   // return new Response(JSON.stringify(data), { status: 200, headers: { 'ETag': etag, 'Cache-Control': 'private, max-age=86400' } });
 }

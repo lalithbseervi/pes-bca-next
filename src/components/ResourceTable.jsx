@@ -125,7 +125,7 @@ export default function ResourceTable({ semesterId, subjectId, resourceType }) {
 
             if (res.status === 200) {
               const newData = res.data;
-              const newETag = res.headers["etag"];
+              const newETag = res.headers["etag"] || res.headers["x-res-tag"];
 
               // Parse cached data for this resource type
               let cachedAll = JSON.parse(cachedResources);
@@ -187,7 +187,7 @@ export default function ResourceTable({ semesterId, subjectId, resourceType }) {
 
         if (res.status === 200) {
           const data = res.data;
-          const newETag = res.headers["etag"];
+          const newETag = res.headers["etag"] || res.headers["x-res-tag"];
           try {
             localStorage.setItem(resourceCacheKey, JSON.stringify(data));
             localStorage.setItem(`etag_${activeUnitId}`, newETag);

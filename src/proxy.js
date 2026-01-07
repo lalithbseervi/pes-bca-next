@@ -6,7 +6,7 @@ const corsOptions = {
   allowedMethods: ["GET", "HEAD", "PUT", "POST", "DELETE", "OPTIONS"],
   allowedOrigins: process.env.DEVELOPMENT === 'false' ? ["http://localhost:3000", "*"] : ["https://lmsu.vercel.app"],
   allowedHeaders: ["Content-Type", "Authorization", "If-None-Match"],
-  exposedHeaders: ["etag"],
+  exposedHeaders: ["etag", "x-res-tag"],
   maxAge: "86400", // 24 hours
   credentials: "true",
 };
