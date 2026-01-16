@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { useSession } from "@/components/ClientLayout";
 import axiosClient from "@/lib/axios_client";
@@ -20,10 +21,23 @@ export default function Dashboard() {
   const [selectedResourceType, setSelectedResourceType] = useState("");
 
   const { session } = useSession();
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   // Set page title
   useEffect(() => {
     document.title = "Dashboard | LMS";
+  }, []);
+
+  // Load dropdown values from URL query params on mount
+  useEffect(() => {
+    const semId = searchParams.get("semester");
+    const subId = searchParams.get("subject");
+    const resType = searchParams.get("resourceType");
+
+    if (semId) setSelectedSemesterId(semId);
+    if (subId) setSelectedSubjectId(subId);
+    if (resType) setSelectedResourceType(resType);
   }, []);
 
   // Fetch semesters for user's course
@@ -94,8 +108,21 @@ export default function Dashboard() {
           <Select
             value={selectedSemesterId}
             onChange={(e) => {
-              setSelectedSemesterId(e.target.value);
+              const newSemId = e.target.value;
+              setSelectedSemesterId(newSemId);
               setSelectedSubjectId("");
+              setSelectedResourceType("");
+              
+              // Update URL params
+              const params = new URLSearchParams(searchParams);
+              if (newSemId) {
+                params.set("semester", newSemId);
+              } else {
+                params.delete("semester");
+              }
+              params.delete("subject");
+              params.delete("resourceType");
+              router.push(`/?${params.toString()}`);
             }}
             placeholder="Select semester"
             options={semesters.map((sem) => ({
@@ -112,7 +139,21 @@ export default function Dashboard() {
           <label className="block font-semibold mb-1 text-sm md:text-base text-gray-900 dark:text-gray-100">Subject</label>
           <Select
             value={selectedSubjectId}
-            onChange={(e) => setSelectedSubjectId(e.target.value)}
+            onChange={(e) => {
+              const newSubId = e.target.value;
+              setSelectedSubjectId(newSubId);
+              setSelectedResourceType("");
+              
+              // Update URL params
+              const params = new URLSearchParams(searchParams);
+              if (newSubId) {
+                params.set("subject", newSubId);
+              } else {
+                params.delete("subject");
+              }
+              params.delete("resourceType");
+              router.push(`/?${params.toString()}`);
+            }}
             disabled={!selectedSemesterId}
             placeholder="Select subject"
             options={subjects.map((sub) => ({
@@ -129,7 +170,19 @@ export default function Dashboard() {
           <label className="block font-semibold mb-1 text-sm md:text-base text-gray-900 dark:text-gray-100">Resource Type</label>
           <Select
             value={selectedResourceType}
-            onChange={(e) => setSelectedResourceType(e.target.value)}
+            onChange={(e) => {
+              const newResType = e.target.value;
+              setSelectedResourceType(newResType);
+              
+              // Update URL params
+              const params = new URLSearchParams(searchParams);
+              if (newResType) {
+                params.set("resourceType", newResType);
+              } else {
+                params.delete("resourceType");
+              }
+              router.push(`/?${params.toString()}`);
+            }}
             disabled={!selectedSubjectId}
             placeholder="All (Slides, QA, etc.)"
             options={[
