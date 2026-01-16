@@ -92,7 +92,7 @@ export default function ProfileCompletionModal() {
 
       // Persist best-effort to backend so future logins reuse these details
       try {
-        await axiosClient.post("/api/profile/complete", {
+        await axiosClient.post("/api/profile/", {
           course_id,
           current_semester,
         });

@@ -118,7 +118,7 @@ export default function AuthenticatePage() {
               id="username"
               value={username}
               onChange={handleUsernameChange}
-              className="p-3 rounded-md bg-white dark:bg-[#2a2a2a] text-gray-900 dark:text-white border border-gray-300 dark:border-gray-700 focus:border-emerald-600 focus:outline-none autofill:shadow-[inset_0_0_0px_1000px_rgb(255,255,255)] dark:autofill:shadow-[inset_0_0_0px_1000px_rgb(42,42,42)] mb-2 w-full"
+              className="p-3 rounded-md bg-white dark:bg-[#2a2a2a] text-gray-900 dark:text-white border border-gray-300 dark:border-gray-700 focus:border-emerald-600 focus:outline-none autofill:shadow-[inset_0_0_0px_1000px_rgb(255,255,255)] dark:autofill:shadow-[inset_0_0_0px_1000px_rgb(42,42,42)] autofill:[-webkit-text-fill-color:rgb(17,24,39)] dark:autofill:[-webkit-text-fill-color:rgb(255,255,255)] mb-2 w-full"
             />
             <label className="text-lg text-gray-900 dark:text-gray-100">Password (PESU Academy password)</label>
             <div className="relative">
@@ -128,7 +128,7 @@ export default function AuthenticatePage() {
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="p-3 pr-16 rounded-md bg-white dark:bg-[#2a2a2a] text-gray-900 dark:text-white border border-gray-300 dark:border-gray-700 focus:border-emerald-600 focus:outline-none autofill:shadow-[inset_0_0_0px_1000px_rgb(255,255,255)] dark:autofill:shadow-[inset_0_0_0px_1000px_rgb(42,42,42)] w-full"
+                className="p-3 pr-16 rounded-md bg-white dark:bg-[#2a2a2a] text-gray-900 dark:text-white border border-gray-300 dark:border-gray-700 focus:border-emerald-600 focus:outline-none autofill:shadow-[inset_0_0_0px_1000px_rgb(255,255,255)] dark:autofill:shadow-[inset_0_0_0px_1000px_rgb(42,42,42)] autofill:[-webkit-text-fill-color:rgb(17,24,39)] dark:autofill:[-webkit-text-fill-color:rgb(255,255,255)] w-full"
               />
               <button
                 type="button"
